@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": 1202,
+  "version": "102",
   "name": "SC Log Event Handler",
   "id": "TP_SC-LFE",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.exe\"",

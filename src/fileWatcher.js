@@ -8,6 +8,7 @@ module.exports = class FileWatcher {
     readInterval = 1000;
     logFilePath = '';
     lastFileSize = 0;
+    fileBirthTime = null;
 
     pluginId = '';
     scLogEventHandler = null;
@@ -25,14 +26,13 @@ module.exports = class FileWatcher {
 
     stopWatchingFile = () => {
         if (this.timeout) {
+            this.tpClient.logIt("DEBUG", `Clear interval with ID ${this.timeout}`);
             clearInterval(this.timeout);
         }
     }
 
     watchLogFile = () => {
-        if (this.timeout) {
-            clearInterval(this.timeout);
-        }
+        this.stopWatchingFile()
 
         if (!fs.existsSync(this.logFilePath)) {
             this.tpClient.logIt('ERROR', `Log file at ${this.logFilePath} does not exist`);
@@ -51,8 +51,18 @@ module.exports = class FileWatcher {
             try {
                 fs.stat(this.logFilePath, (err, stats) => {
                     if (err) {
-                        console.error("Error reading log file:", err);
+                        this.tpClient.logIt("ERROR", err.message);
                         return;
+                    }
+
+                    if (
+                        this.fileBirthTime === null
+                        || this.fileBirthTime.getTime() < stats.birthtime.getTime()
+                        || stats.size < this.lastFileSize
+                    ) {
+                        this.tpClient.logIt("DEBUG", "New logfile was (re-)created, resetting read offset");
+                        this.fileBirthTime = stats.birthtime;
+                        this.lastFileSize = 0;
                     }
 
                     if (stats.size > this.lastFileSize) {
@@ -83,7 +93,6 @@ module.exports = class FileWatcher {
 
                             this.lastFileSize = stats.size;
                         });
-
                     }
                 });
             } catch (err) {
