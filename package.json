@@ -1,0 +1,27 @@
+{
+  "name": "sc-log-event-handler",
+  "version": "1.0.0",
+  "description": "Touch Portal plugin to read Star Citizen's Game.log and evaluate events",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "node scripts/build.js"
+  },
+  "keywords": [
+    "TouchPortal",
+    "TouchPortalPlugins",
+    "Star Citizen"
+  ],
+  "author": "BluntlyCat",
+  "license": "MIT",
+  "dependencies": {
+    "node-wmi": "^0.0.5",
+    "out-url": "^1.1.3",
+    "touchportal-api": "^3.2.1"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.5.9",
+    "pkg": "^5.8.0"
+  }
+}

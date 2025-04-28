@@ -1,0 +1,89 @@
+const fs = require('fs');
+const ScLogEventHandler = require('./ScLogEventHandler');
+
+module.exports = class FileWatcher {
+    tpClient = null;
+    timeout = null;
+
+    readInterval = 1000;
+    logFilePath = '';
+    lastFileSize = 0;
+
+    pluginId = '';
+    scLogEventHandler = null;
+
+    constructor(tpClient, logFilePath, pluginId) {
+        this.tpClient = tpClient;
+        this.logFilePath = logFilePath;
+        this.pluginId = pluginId;
+
+        this.scLogEventHandler = new ScLogEventHandler(tpClient);
+
+        tpClient.logIt("DEBUG", `Created instance to watch file at ${this.logFilePath}`);
+    }
+
+    stopWatchingFile = () => {
+        if (this.timeout) {
+            clearInterval(this.timeout);
+        }
+    }
+
+    watchLogFile = () => {
+        if (this.timeout) {
+            clearInterval(this.timeout);
+        }
+
+        if (!fs.existsSync(this.logFilePath)) {
+            this.tpClient.logIt('ERROR', `Log file at ${this.logFilePath} does not exist`);
+            this.tpClient.sendNotification(
+                `${this.pluginId}_logfile_not_found`,
+                'SC Game log file not found',
+                `Log file at ${this.logFilePath} does not exist`,
+                [{
+                    id: `${this.pluginId}_logfile_not_found`,
+                    title: "Go to plugin settings and check if root path and environment are correct"
+                }]
+            );
+        }
+
+        this.timeout = setInterval(() => {
+            fs.stat(this.logFilePath, (err, stats) => {
+                if (err) {
+                    console.error("Error reading log file:", err);
+                    return;
+                }
+
+                if (stats.size > this.lastFileSize) {
+                    const readStream = fs.createReadStream(this.logFilePath, {
+                        start: this.lastFileSize,
+                        end: stats.size
+                    });
+
+                    let buffer = '';
+
+                    readStream.on('data', (chunk) => {
+                        buffer += chunk.toString();
+                    });
+
+                    readStream.on('end', () => {
+                        const lines = buffer.split(/\r?\n/);
+                        lines.forEach((line) => {
+                            if (!line) {
+                                return;
+                            }
+
+                            Object.keys(this.scLogEventHandler.eventHandlers).forEach(keyword => {
+                                if (line.includes(keyword)) {
+                                    this.scLogEventHandler.eventHandlers[keyword](line);
+                                }
+                            });
+                        });
+
+                        this.lastFileSize = stats.size;
+                    });
+
+                }
+            });
+        }, this.readInterval);
+    }
+}

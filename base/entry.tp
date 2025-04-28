@@ -1,0 +1,56 @@
+{
+  "sdk": 6,
+  "version": 1202,
+  "name": "SC Log Event Handler",
+  "id": "TP_SC-LFE",
+  "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.exe\"",
+  "configuration": {
+    "colorDark": "#225834",
+    "colorLight": "#45b168"
+  },
+  "settings":[
+    {
+      "name":"Star Citizen Root Directory",
+      "default":"",
+      "type":"text"
+    },
+    {
+      "name":"Star Citizen Environment",
+      "default":"LIVE",
+      "type":"choice",
+      "parentGroup": "Environments",
+      "valueChoices": [
+        "LIVE",
+        "HOTFIX",
+        "PTU",
+        "EPTU"
+      ]
+    },
+    {
+      "name":"Star Citizen Game Log File",
+      "default":"Game.log",
+      "type":"text"
+    }
+  ],
+  "categories": [
+    {
+      "id": "TP_SC-LEH",
+      "name": "TP SC Log Event Handler",
+      "imagepath": "%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.png",
+      "actions": [ ],
+      "states": [
+        {
+            "id": "sc_leh_helmet_state",
+            "type": "text",
+            "default": "off"
+        },
+        {
+            "id": "sc_leh_kill_state",
+            "type": "text",
+            "default": "Not yet killed by anyone"
+        }
+      ],
+      "events": [ ]
+    }
+  ]
+}
