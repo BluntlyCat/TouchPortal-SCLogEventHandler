@@ -6,7 +6,8 @@ module.exports = {
     scRootPath: 'Star Citizen Root Directory',
     scEnvironment: 'Star Citizen Environment',
     scGameLogFile: 'Star Citizen Game Log File',
-    updateUrl: 'https://raw.githubusercontent.com/bluntlycat/TouchPortal-SC-Log-Event-Handler/main/package.json',
-    releaseUrl: 'https://github.com/bluntlycat/TouchPortal-SC-Log-Event-Handler/releases',
+    scReadLogInterval: 'Star Citizen Read Interval',
+    updateUrl: 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/main/package.json',
+    releaseUrl: 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/releases',
     scKillRegex: /^<(\d+-\d+-\d+T\d+:\d+:\d+.\d+Z)>.+Actor Death.+killed by '(\w+)' .+with damage type '(\w+)'.+$/
 }

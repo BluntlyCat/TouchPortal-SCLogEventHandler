@@ -12,10 +12,11 @@ module.exports = class FileWatcher {
     pluginId = '';
     scLogEventHandler = null;
 
-    constructor(tpClient, logFilePath, pluginId) {
+    constructor(tpClient, logFilePath, pluginId, readInterval) {
         this.tpClient = tpClient;
         this.logFilePath = logFilePath;
         this.pluginId = pluginId;
+        this.readInterval = readInterval;
 
         this.scLogEventHandler = new ScLogEventHandler(tpClient);
 
@@ -47,43 +48,48 @@ module.exports = class FileWatcher {
         }
 
         this.timeout = setInterval(() => {
-            fs.stat(this.logFilePath, (err, stats) => {
-                if (err) {
-                    console.error("Error reading log file:", err);
-                    return;
-                }
+            try {
+                fs.stat(this.logFilePath, (err, stats) => {
+                    if (err) {
+                        console.error("Error reading log file:", err);
+                        return;
+                    }
 
-                if (stats.size > this.lastFileSize) {
-                    const readStream = fs.createReadStream(this.logFilePath, {
-                        start: this.lastFileSize,
-                        end: stats.size
-                    });
-
-                    let buffer = '';
-
-                    readStream.on('data', (chunk) => {
-                        buffer += chunk.toString();
-                    });
-
-                    readStream.on('end', () => {
-                        const lines = buffer.split(/\r?\n/);
-                        lines.forEach((line) => {
-                            if (!line) {
-                                return;
-                            }
-
-                            Object.keys(this.scLogEventHandler.eventHandlers).forEach(keyword => {
-                                if (line.includes(keyword)) {
-                                    this.scLogEventHandler.eventHandlers[keyword](line);
-                                }
-                            });
+                    if (stats.size > this.lastFileSize) {
+                        const readStream = fs.createReadStream(this.logFilePath, {
+                            start: this.lastFileSize,
+                            end: stats.size
                         });
 
-                        this.lastFileSize = stats.size;
-                    });
+                        let buffer = '';
 
-                }
-            });
+                        readStream.on('data', (chunk) => {
+                            buffer += chunk.toString();
+                        });
+
+                        readStream.on('end', () => {
+                            const lines = buffer.split(/\r?\n/);
+                            lines.forEach((line) => {
+                                if (!line) {
+                                    return;
+                                }
+
+                                Object.keys(this.scLogEventHandler.eventHandlers).forEach(keyword => {
+                                    if (line.includes(keyword)) {
+                                        this.scLogEventHandler.eventHandlers[keyword](line);
+                                    }
+                                });
+                            });
+
+                            this.lastFileSize = stats.size;
+                        });
+
+                    }
+                });
+            } catch (err) {
+                this.tpClient.logIt('ERROR', err.message || 'An error occurred reading the log file');
+                this.watchLogFile();
+            }
         }, this.readInterval);
     }
 }

@@ -16,9 +16,10 @@ const pluginId = Constants.pluginId;
 let fileWatcher = null;
 
 const pluginSettings = {
-    [Constants.scRootPath]: 'E:\\Roberts Space Industries\\StarCitizen',
+    [Constants.scRootPath]: '',
     [Constants.scEnvironment]: 'LIVE',
     [Constants.scGameLogFile]: 'Game.log',
+    [Constants.scReadLogInterval]: 1000,
 }
 
 const initFileWatcher = () => {
@@ -29,7 +30,8 @@ const initFileWatcher = () => {
     fileWatcher = new FileWatcher(
         TPClient,
         `${pluginSettings[Constants.scRootPath]}\\${pluginSettings[Constants.scEnvironment]}\\${pluginSettings[Constants.scGameLogFile]}`,
-        pluginId
+        pluginId,
+        +pluginSettings[Constants.scReadLogInterval]
     );
 
     fileWatcher.watchLogFile();
