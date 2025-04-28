@@ -11,7 +11,7 @@
   "settings":[
     {
       "name":"Star Citizen Root Directory",
-      "default":"",
+      "default":"C:\\Program Files\\Roberts Space Industries\\StarCitizen",
       "type":"text"
     },
     {
@@ -33,7 +33,7 @@
     },
     {
       "name":"Star Citizen Read Interval",
-      "default": "1000",
+      "default": "500",
       "type":"number"
     }
   ],

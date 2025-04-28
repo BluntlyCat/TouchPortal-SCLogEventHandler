@@ -5,7 +5,7 @@ module.exports = class FileWatcher {
     tpClient = null;
     timeout = null;
 
-    readInterval = 1000;
+    readInterval = 500;
     logFilePath = '';
     lastFileSize = 0;
     fileBirthTime = null;
