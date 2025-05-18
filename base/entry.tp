@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": "102",
+  "version": "200",
   "name": "SC Log Event Handler",
   "id": "TP_SC-LFE",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.exe\"",
@@ -35,6 +35,21 @@
       "name":"Star Citizen Read Interval",
       "default": "500",
       "type":"number"
+    },
+    {
+      "name":"Star Citizen Total Money",
+      "default": "0",
+      "type":"number"
+    },
+    {
+      "name":"Star Citizen Squad Money",
+      "default": "0",
+      "type":"number"
+    },
+    {
+      "name":"Star Citizen Personal Money",
+      "default": "0",
+      "type":"number"
     }
   ],
   "categories": [
@@ -53,6 +68,21 @@
             "id": "sc_leh_kill_state",
             "type": "text",
             "default": "Not yet killed by anyone"
+        },
+        {
+            "id": "sc_leh_total_money",
+            "type": "number",
+            "default": "0"
+        },
+        {
+            "id": "sc_leh_squad_money",
+            "type": "number",
+            "default": "0"
+        },
+        {
+           "id": "sc_leh_personal_money",
+           "type": "number",
+           "default": "0"
         }
       ],
       "events": [ ]

@@ -6,6 +6,7 @@ const {open} = require("out-url");
 const Constants = require('./consts');
 
 const FileWatcher = require('./FileWatcher');
+const SCWallet = require("./SCWallet");
 
 // Create an instance of the Touch Portal Client
 const TPClient = new TouchPortalApi.Client();
@@ -14,12 +15,16 @@ const TPClient = new TouchPortalApi.Client();
 const pluginId = Constants.pluginId;
 
 let fileWatcher = null;
+let scWallet = null;
 
 const pluginSettings = {
     [Constants.scRootPath]: '',
     [Constants.scEnvironment]: 'LIVE',
     [Constants.scGameLogFile]: 'Game.log',
-    [Constants.scReadLogInterval]: 1000,
+    [Constants.scReadLogInterval]: 500,
+    [Constants.scTotalMoney]: 0,
+    [Constants.scSquadMoney]: 0,
+    [Constants.scPersonalMoney]: 0,
 }
 
 const initFileWatcher = () => {
@@ -37,6 +42,16 @@ const initFileWatcher = () => {
     fileWatcher.watchLogFile();
 }
 
+const initScWallet =  () => {
+    scWallet = new SCWallet(
+        TPClient,
+        pluginId,
+        pluginSettings[Constants.scTotalMoney],
+        pluginSettings[Constants.scSquadMoney],
+        pluginSettings[Constants.scPersonalMoney],
+    );
+}
+
 TPClient.on("Settings", (data) => {
     TPClient.logIt("DEBUG", "Settings: New Settings from Touch-Portal");
     data.forEach((setting) => {
@@ -46,9 +61,10 @@ TPClient.on("Settings", (data) => {
     });
 
     initFileWatcher();
+    initScWallet();
 })
 
-TPClient.on("Info", data => {
+TPClient.on("Info", _data => {
     TPClient.logIt("DEBUG", "Info: received initial connect from Touch-Portal")
 })
 
