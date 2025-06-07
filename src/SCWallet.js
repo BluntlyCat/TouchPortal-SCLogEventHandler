@@ -8,6 +8,7 @@ module.exports = class SCWallet {
     scSquadMoney = 0;
     scPersonalMoney = 0;
 
+
     constructor(tpClient, pluginId, scTotalMoney, scSquadMoney, scPersonalMoney) {
         this.tpClient = tpClient;
         this.pluginId = pluginId;
@@ -59,13 +60,8 @@ module.exports = class SCWallet {
         }
 
         const earning = value - this.totalScMoney;
-        switch (wallet) {
-            case 'personal':
-                this.scPersonalMoney += earning;
-                break;
-            case 'squad':
-                this.scSquadMoney += earning;
-                break;
+        if (wallet === 'squad') {
+            this.scSquadMoney += earning;
         }
 
         this.totalScMoney = value;
@@ -75,8 +71,5 @@ module.exports = class SCWallet {
 
         this.tpClient.stateUpdate('sc_leh_squad_money', this.scSquadMoney);
         this.tpClient.settingUpdate(Constants.scSquadMoney, this.scSquadMoney);
-
-        this.tpClient.stateUpdate('sc_leh_personal_money', this.scPersonalMoney);
-        this.tpClient.settingUpdate(Constants.scPersonalMoney, this.scPersonalMoney);
     }
 }

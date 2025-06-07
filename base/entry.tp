@@ -45,11 +45,6 @@
       "name":"Star Citizen Squad Money",
       "default": "0",
       "type":"number"
-    },
-    {
-      "name":"Star Citizen Personal Money",
-      "default": "0",
-      "type":"number"
     }
   ],
   "categories": [
@@ -57,7 +52,44 @@
       "id": "TP_SC-LEH",
       "name": "TP SC Log Event Handler",
       "imagepath": "%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.png",
-      "actions": [ ],
+      "actions": [
+          {
+            "id": "sc_leh_action_add_money",
+            "name": "Add Money",
+            "lines": {
+                "action": [
+                    {
+                        "language": "default",
+                        "data": [
+                            {
+                                "lineFormat": "Set new wallet value {$new_sc_money_value$}"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "type": "communicate",
+            "data": [
+                {
+                    "id": "new_sc_money_value",
+                    "type": "number",
+                    "label": "New wallet value",
+                    "default": "0",
+                    "minValue": "0"
+                },
+                {
+                    "id": "sc_target_wallet",
+                    "type": "choice",
+                    "label": "Wallet",
+                    "default": "Personal",
+                    "valueChoices": [
+                        "Personal",
+                        "Squad"
+                    ]
+                }
+            ]
+          }
+      ],
       "states": [
         {
             "id": "sc_leh_helmet_state",
@@ -67,7 +99,7 @@
         {
             "id": "sc_leh_kill_state",
             "type": "text",
-            "default": "Not yet killed by anyone"
+            "default": "No kill detected"
         },
         {
             "id": "sc_leh_total_money",
@@ -78,11 +110,6 @@
             "id": "sc_leh_squad_money",
             "type": "number",
             "default": "0"
-        },
-        {
-           "id": "sc_leh_personal_money",
-           "type": "number",
-           "default": "0"
         }
       ],
       "events": [ ]

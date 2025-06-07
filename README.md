@@ -58,4 +58,4 @@ on/off; default = off
 ### sc_leh_kill_state
 
 Shows a text with date, name of murderer and cause of death  
-In case no kill happened, the message 'Not yet killed by anyone' is shown
+In case no kill happened, the message 'No kill detected' is shown

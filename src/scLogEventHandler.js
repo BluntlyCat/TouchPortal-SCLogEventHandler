@@ -33,17 +33,29 @@ module.exports = class ScLogEventHandler {
         this.tpClient.stateUpdate('sc_leh_helmet_state', helmetState);
     }
 
+    formatNpcName = (rawName) => {
+        return rawName
+            .split('_')
+            .map(s => `${s.charAt(0).toUpperCase()}${s.slice(1)}`)
+            .join(' ')
+            .trim();
+    }
+
     handleKillEvent = (line) => {
         const killMatch = Constants.scKillRegex.exec(line);
-        let killMsg = 'Not yet killed by anyone';
+        let killMsg = 'No kill detected';
 
-        if (killMatch) {
-            const timeStr = killMatch[1];
-            const time = new Date(timeStr);
-            const murderer =  killMatch[2];
-            const cause = killMatch[3];
+        if (killMatch && killMatch.groups) {
+            console.log(killMatch);
+            const groups = killMatch.groups;
+            const timeStr = groups['timestamp'];
+            const time = new Date(timeStr).toLocaleString();
+            const victim =  groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
+            //const zone =  groups[3];
+            const killer =  groups['killer'];
+            const dmgType = groups['dmgType'];
 
-            killMsg = `Killed at ${time.toLocaleString()}\nCause: ${cause} by ${murderer}`;
+            killMsg = `${victim} was killed at ${time}\nCause: ${dmgType} by ${killer}`;
         }
 
         this.tpClient.stateUpdate('sc_leh_kill_state', killMsg);
