@@ -24,7 +24,6 @@ const pluginSettings = {
     [Constants.scReadLogInterval]: 500,
     [Constants.scTotalMoney]: 0,
     [Constants.scSquadMoney]: 0,
-    [Constants.scPersonalMoney]: 0,
 }
 
 const initFileWatcher = () => {
@@ -48,7 +47,6 @@ const initScWallet =  () => {
         pluginId,
         pluginSettings[Constants.scTotalMoney],
         pluginSettings[Constants.scSquadMoney],
-        pluginSettings[Constants.scPersonalMoney],
     );
 }
 
@@ -81,6 +79,42 @@ TPClient.on("Update", (curVersion, newVersion) => {
 TPClient.on("NotificationClicked", (data) => {
     if (data.optionId === `${pluginId}_update_notification_go_to_download`) {
         void open(Constants.releaseUrl);
+    }
+});
+
+TPClient.on("Action", (actionData) => {
+    TPClient.logIt("DEBUG", "Action: Received", actionData);
+
+    if (actionData.actionId === "sc_leh_action_add_money") {
+        const newValue = parseInt(actionData.data.find(d => d.id === "new_sc_money_value")?.value);
+        const target = actionData.data.find(d => d.id === "sc_target_wallet")?.value;
+
+        if (isNaN(newValue)) {
+            TPClient.logIt("ERROR", "Add Money: Invalid number value received");
+            return;
+        }
+
+        // Alte Werte aus pluginSettings holen
+        const prevTotal = parseInt(pluginSettings[Constants.scTotalMoney]) || 0;
+        const prevSquad = parseInt(pluginSettings[Constants.scSquadMoney]) || 0;
+
+        const earning = newValue - prevTotal;
+
+        // Werte aktualisieren
+        pluginSettings[Constants.scTotalMoney] = newValue;
+        if (target === "Squad") {
+            pluginSettings[Constants.scSquadMoney] = prevSquad + earning;
+        }
+
+        // Persönliches Vermögen = Total - Squad
+        const personal = newValue - pluginSettings[Constants.scSquadMoney];
+        pluginSettings[Constants.scPersonalMoney] = personal;
+
+        // States an Touch Portal zurücksenden
+        TPClient.stateUpdate("sc_leh_total_money", newValue);
+        TPClient.stateUpdate("sc_leh_squad_money", pluginSettings[Constants.scSquadMoney]);
+
+        TPClient.logIt("INFO", `Add Money: New Total: ${newValue}, Squad: ${pluginSettings[Constants.scSquadMoney]}, Personal: ${personal}`);
     }
 });
 

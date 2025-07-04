@@ -6,16 +6,14 @@ module.exports = class SCWallet {
 
     scTotalMoney = 0;
     scSquadMoney = 0;
-    scPersonalMoney = 0;
 
 
-    constructor(tpClient, pluginId, scTotalMoney, scSquadMoney, scPersonalMoney) {
+    constructor(tpClient, pluginId, scTotalMoney, scSquadMoney) {
         this.tpClient = tpClient;
         this.pluginId = pluginId;
 
         this.scTotalMoney = +scTotalMoney;
         this.scSquadMoney = +scSquadMoney;
-        this.scPersonalMoney = +scPersonalMoney;
     }
 
     setTotalScMoney(totalScMoney) {
@@ -24,10 +22,6 @@ module.exports = class SCWallet {
 
     setSquadMoney(squadMoney) {
         this.scSquadMoney = +squadMoney;
-    }
-
-    setPersonalMoney(personalMoney) {
-        this.scPersonalMoney = +personalMoney;
     }
 
     setNewWalletValue = (value, wallet) => {

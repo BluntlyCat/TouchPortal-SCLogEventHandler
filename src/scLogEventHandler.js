@@ -45,6 +45,7 @@ module.exports = class ScLogEventHandler {
         const killMatch = Constants.scKillRegex.exec(line);
         let killMsg = 'No kill detected';
 
+        console.log("KILLMATCH", killMatch, line);
         if (killMatch && killMatch.groups) {
             console.log(killMatch);
             const groups = killMatch.groups;
@@ -55,7 +56,7 @@ module.exports = class ScLogEventHandler {
             const killer =  groups['killer'];
             const dmgType = groups['dmgType'];
 
-            killMsg = `${victim} was killed at ${time}\nCause: ${dmgType} by ${killer}`;
+            killMsg = `Event:\t${victim} was killed by ${killer}\nWhen:\t${time}\nCause:\t${dmgType}`;
         }
 
         this.tpClient.stateUpdate('sc_leh_kill_state', killMsg);

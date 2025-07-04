@@ -1,12 +1,13 @@
 {
   "sdk": 6,
-  "version": "200",
-  "name": "SC Log Event Handler",
-  "id": "TP_SC-LFE",
-  "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.exe\"",
+  "version": "201",
+  "name": "Touch Portal Star Citizen Tools",
+  "id": "touch_portal_star_citizen_tools",
+  "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.exe\"",
   "configuration": {
     "colorDark": "#225834",
-    "colorLight": "#45b168"
+    "colorLight": "#45b168",
+    "parentCategory": "games"
   },
   "settings":[
     {
@@ -49,36 +50,37 @@
   ],
   "categories": [
     {
-      "id": "TP_SC-LEH",
-      "name": "TP SC Log Event Handler",
-      "imagepath": "%TP_PLUGIN_FOLDER%sc-log-event-handler\\sc-log-event-handler.png",
+      "id": "touch_portal_star_citizen_tools.Main",
+      "name": "SCTools",
+      "imagepath": "%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.png",
       "actions": [
           {
-            "id": "sc_leh_action_add_money",
+            "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection",
             "name": "Add Money",
+            "type": "communicate",
+            "prefix": "SCTools",
             "lines": {
                 "action": [
                     {
                         "language": "default",
                         "data": [
                             {
-                                "lineFormat": "Set new wallet value {$new_sc_money_value$}"
+                                "lineFormat": "Add {$new_sc_money_value$} to {$sc_target_wallet$} wallet"
                             }
                         ]
                     }
                 ]
             },
-            "type": "communicate",
             "data": [
                 {
-                    "id": "new_sc_money_value",
+                    "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection.Data.New.Value",
                     "type": "number",
                     "label": "New wallet value",
                     "default": "0",
                     "minValue": "0"
                 },
                 {
-                    "id": "sc_target_wallet",
+                    "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection.Data.Wallet",
                     "type": "choice",
                     "label": "Wallet",
                     "default": "Personal",
@@ -112,7 +114,7 @@
             "default": "0"
         }
       ],
-      "events": [ ]
+      "events": []
     }
   ]
 }
