@@ -1,25 +1,27 @@
-const fs = require('fs');
-const ScLogEventHandler = require('./ScLogEventHandler');
+import fs from 'fs';
+import {Client} from "touchportal-api";
+import {ScLogEventHandler} from "./events/ScLogEventHandler";
 
-module.exports = class FileWatcher {
-    tpClient = null;
-    timeout = null;
+export class FileWatcher {
+    tpClient: Client;
+    timeout: any;
 
     readInterval = 500;
     logFilePath = '';
     lastFileSize = 0;
-    fileBirthTime = null;
+    fileBirthTime: Date;
 
     pluginId = '';
-    scLogEventHandler = null;
+    scLogEventHandler: ScLogEventHandler;
 
-    constructor(tpClient, logFilePath, pluginId, readInterval) {
+    constructor(tpClient: Client, logFilePath: string, pluginId: string, readInterval: number, eventHandler: ScLogEventHandler) {
         this.tpClient = tpClient;
         this.logFilePath = logFilePath;
         this.pluginId = pluginId;
         this.readInterval = readInterval;
 
-        this.scLogEventHandler = new ScLogEventHandler(tpClient);
+        this.scLogEventHandler = eventHandler;
+        this.fileBirthTime = new Date("1970-01-01 00:00:00");
 
         tpClient.logIt("DEBUG", `Created instance to watch file at ${this.logFilePath}`);
     }
@@ -84,9 +86,9 @@ module.exports = class FileWatcher {
                                     return;
                                 }
 
-                                Object.keys(this.scLogEventHandler.eventHandlers).forEach(keyword => {
-                                    if (line.includes(keyword)) {
-                                        this.scLogEventHandler.eventHandlers[keyword](line);
+                                Object.entries(this.scLogEventHandler.eventHandlers).forEach(([eventKey, handler]) => {
+                                    if (line.includes(eventKey)) {
+                                        handler.handleEvent(line);
                                     }
                                 });
                             });
@@ -96,7 +98,7 @@ module.exports = class FileWatcher {
                     }
                 });
             } catch (err) {
-                this.tpClient.logIt('ERROR', err.message || 'An error occurred reading the log file');
+                this.tpClient.logIt('ERROR', 'An error occurred reading the log file');
                 this.watchLogFile();
             }
         }, this.readInterval);

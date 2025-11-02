@@ -9,15 +9,15 @@
     "colorLight": "#45b168",
     "parentCategory": "games"
   },
-  "settings":[
+  "settings": [
     {
-      "name":"Star Citizen Root Directory",
-      "default":"C:\\Program Files\\Roberts Space Industries\\StarCitizen",
-      "type":"text"
+      "name": "Star Citizen Root Directory",
+      "default": "C:\\Program Files\\Roberts Space Industries\\StarCitizen",
+      "type": "text"
     },
     {
-      "name":"Star Citizen Environment",
-      "default":"LIVE",
+      "name": "Star Citizen Environment",
+      "default": "LIVE",
       "type": "choice",
       "parentGroup": "Environments",
       "choices": [
@@ -28,95 +28,45 @@
       ]
     },
     {
-      "name":"Star Citizen Game Log File",
-      "default":"Game.log",
-      "type":"text"
+      "name": "Star Citizen Game Log File",
+      "default": "Game.log",
+      "type": "text"
     },
     {
-      "name":"Star Citizen Read Interval",
-      "default": "500",
-      "type":"number"
-    },
-    {
-      "name":"Star Citizen Total Money",
-      "default": "0",
-      "type":"number"
-    },
-    {
-      "name":"Star Citizen Squad Money",
-      "default": "0",
-      "type":"number"
+      "name": "Star Citizen Read Interval",
+      "default": 500,
+      "type": "number"
     }
   ],
   "categories": [
     {
-      "id": "touch_portal_star_citizen_tools.Main",
-      "name": "SCTools",
+      "id": "touch_portal_star_citizen_tools_main",
+      "name": "SC Tools",
       "imagepath": "%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.png",
       "actions": [
-          {
-            "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection",
-            "name": "Add Money",
-            "type": "communicate",
-            "prefix": "SCTools",
-            "lines": {
-                "action": [
-                    {
-                        "language": "default",
-                        "data": [
-                            {
-                                "lineFormat": "Add {$new_sc_money_value$} to {$sc_target_wallet$} wallet"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "data": [
-                {
-                    "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection.Data.New.Value",
-                    "type": "number",
-                    "label": "New wallet value",
-                    "default": "0",
-                    "minValue": "0"
-                },
-                {
-                    "id": "touch_portal_star_citizen_tools.Plugin.Action.Connection.Data.Wallet",
-                    "type": "choice",
-                    "label": "Wallet",
-                    "default": "Personal",
-                    "valueChoices": [
-                        "Personal",
-                        "Squad"
-                    ]
-                }
-            ]
-          }
+        {
+          "id": "sc_next_kill_msg",
+          "name": "Next Kill Message",
+          "type": "communicate",
+          "prefix": "SC Tools:",
+          "format": "Iterate through kill messages"
+        }
       ],
       "states": [
         {
-            "id": "sc_leh_helmet_state",
-            "type": "text",
-            "default": "off"
+          "id": "sc_leh_helmet_state",
+          "type": "text",
+          "default": "off"
         },
         {
-            "id": "sc_leh_kill_state",
-            "type": "text",
-            "default": "No kill detected"
+          "id": "sc_leh_kill_state",
+          "type": "text",
+          "default": "No kill detected"
         },
         {
-            "id": "sc_leh_kill_state_full",
-            "type": "text",
-            "default": ""
-        },
-        {
-            "id": "sc_leh_total_money",
-            "type": "number",
-            "default": "0"
-        },
-        {
-            "id": "sc_leh_squad_money",
-            "type": "number",
-            "default": "0"
+          "id": "sc_leh_kill_state_full",
+          "type": "text",
+          "default": ""
         }
       ],
       "events": []
