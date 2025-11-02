@@ -50,6 +50,13 @@
           "type": "communicate",
           "prefix": "SC Tools:",
           "format": "Iterate through kill messages"
+        },
+        {
+          "id": "sc_prev_kill_msg",
+          "name": "Previous Kill Message",
+          "type": "communicate",
+          "prefix": "SC Tools:",
+          "format": "Iterate through kill messages"
         }
       ],
       "states": [

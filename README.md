@@ -47,7 +47,7 @@ However, in case you need to reduce the workload, you can increase the value her
 
 ## States
 
-currently two states are supported:
+currently the following states are supported:
 
 ### sc_leh_helmet_state
 

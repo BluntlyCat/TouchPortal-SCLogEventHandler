@@ -39,7 +39,12 @@ const initFileWatcher = () => {
         scLogEventHandler
     );
 
-    fileWatcher.watchLogFile();
+    try {
+        fileWatcher.watchLogFile();
+    } catch(err) {
+        tpClient.logIt('ERROR', 'An error occurred reading the log file');
+        fileWatcher.watchLogFile();
+    }
 }
 
 tpClient.on("Settings", (data) => {
@@ -74,11 +79,18 @@ tpClient.on("NotificationClicked", (data) => {
 });
 
 tpClient.on("Action", (actionData) => {
-    tpClient.logIt("DEBUG", "Action: Received", actionData);
+    tpClient.logIt("DEBUG", "Action Received", actionData);
 
     if (actionData.actionId === "sc_next_kill_msg") {
         const killHandler = scLogEventHandler.eventHandlers.kill as KillEvent;
-        killHandler.nextMessage();
+        if (killHandler.hasKillEvents) {
+            killHandler.nextMessage();
+        }
+    } else if (actionData.actionId === "sc_prev_kill_msg") {
+        const killHandler = scLogEventHandler.eventHandlers.kill as KillEvent;
+        if (killHandler.hasKillEvents) {
+            killHandler.previousMessage();
+        }
     }
 });
 

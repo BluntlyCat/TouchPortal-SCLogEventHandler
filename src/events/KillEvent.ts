@@ -1,12 +1,12 @@
 import {BaseEventHandler} from "./BaseEvent";
 import {Client} from "touchportal-api";
 import {SC_KILL_REGEX} from "../constants";
+import {History} from "./History";
+
+const noKillMsg = 'No kill detected';
 
 export class KillEvent extends BaseEventHandler {
-    private killEvents: { events: string[], logs: string[] } = {
-        events: [],
-        logs: [],
-    };
+    private killEvents: History[] = [];
 
     private eventIndex = 0;
 
@@ -14,37 +14,57 @@ export class KillEvent extends BaseEventHandler {
         super(tpClient);
     }
 
+    public get hasKillEvents(): boolean {
+        return this.killEvents.length > 0;
+    }
+
+    public clearHistory(): void {
+        this.killEvents = [];
+        this.eventIndex = 0;
+    }
+
     public handleEvent(line: string) {
         this.tpClient.logIt("DEBUG", "Handle kill event");
         const killMatch = SC_KILL_REGEX.exec(line);
-        let killMsg = 'No kill detected';
+        let killMsg = noKillMsg;
 
-        console.log("KILLMATCH", killMatch, line);
         if (killMatch && killMatch.groups) {
-            console.log(killMatch);
             const groups = killMatch.groups;
             const timeStr = groups['timestamp'] || '';
             const time = new Date(timeStr).toLocaleString();
-            const victim =  groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
+            const victim = groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
             //const zone =  groups[3];
-            const killer =  groups['killer'];
+            const killer = groups['killer'];
             const dmgType = groups['dmgType'];
 
-            killMsg = `Event:\t${victim} was killed by ${killer}\nWhen:\t${time}\nCause:\t${dmgType}`;
+            killMsg = `${victim} was killed by ${killer}\nWhen:\t${time}\nCause:\t${dmgType}`;
+
+            this.killEvents.push(new History(killMsg, line));
+            this.eventIndex = this.killEvents.length - 1;
+            this.tpClient.logIt("DEBUG", "Kill event pushed into array", this.killEvents.length);
         }
 
-        this.killEvents.events.push(killMsg);
-        this.killEvents.logs.push(line);
-
-        this.tpClient.stateUpdate('sc_leh_kill_state', killMsg);
+        this.tpClient.stateUpdate('sc_leh_kill_state', this.getEventMessage(killMsg));
         this.tpClient.stateUpdate('sc_leh_kill_state_full', line);
-        this.tpClient.stateUpdate('sc_leh_kill_state_index', this.killEvents.events.length);
     }
 
-    public nextMessage = () => {
-        this.eventIndex = (this.eventIndex + 1) % this.killEvents.logs.length;
-        this.tpClient.stateUpdate('sc_leh_kill_state', this.killEvents.events[this.eventIndex]);
-        this.tpClient.stateUpdate('sc_leh_kill_state_full', this.killEvents.logs[this.eventIndex]);
+    public nextMessage() {
+        this.tpClient.logIt("DEBUG", "Current Index", this.eventIndex);
+        this.eventIndex = (this.eventIndex + 1) % this.killEvents.length;
+        this.tpClient.logIt("DEBUG", "New Index", this.eventIndex);
+        this.updateStates();
+    }
+
+    public previousMessage() {
+        this.tpClient.logIt("DEBUG", "Current Index", this.eventIndex);
+        this.eventIndex = (this.eventIndex - 1) % this.killEvents.length;
+        this.tpClient.logIt("DEBUG", "New Index", this.eventIndex);
+        this.updateStates();
+    }
+
+    private updateStates() {
+        this.tpClient.stateUpdate('sc_leh_kill_state', this.getEventMessage(this.killEvents[this.eventIndex].message));
+        this.tpClient.stateUpdate('sc_leh_kill_state_full', this.killEvents[this.eventIndex].fullLine);
     }
 
     private formatNpcName = (rawName: string) => {
@@ -53,5 +73,9 @@ export class KillEvent extends BaseEventHandler {
             .map(s => `${s.charAt(0).toUpperCase()}${s.slice(1)}`)
             .join(' ')
             .trim();
+    }
+
+    private getEventMessage(killMsg: string) {
+        return `Event ${this.eventIndex + 1}/${this.killEvents.length}:\t${killMsg}`;
     }
 }

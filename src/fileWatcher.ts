@@ -1,18 +1,20 @@
 import fs from 'fs';
 import {Client} from "touchportal-api";
 import {ScLogEventHandler} from "./events/ScLogEventHandler";
+import {KillEvent} from "./events/KillEvent";
 
 export class FileWatcher {
-    tpClient: Client;
-    timeout: any;
+    private tpClient: Client;
+    private timeout: any;
 
-    readInterval = 500;
-    logFilePath = '';
-    lastFileSize = 0;
-    fileBirthTime: Date;
+    private readonly readInterval: number;
+    private readonly logFilePath: string;
+    private lastFileSize = 0;
+    private fileBirthTime: Date;
 
-    pluginId = '';
-    scLogEventHandler: ScLogEventHandler;
+    private readonly pluginId: string;
+    private scLogEventHandler: ScLogEventHandler;
+    private killEvent;
 
     constructor(tpClient: Client, logFilePath: string, pluginId: string, readInterval: number, eventHandler: ScLogEventHandler) {
         this.tpClient = tpClient;
@@ -21,6 +23,7 @@ export class FileWatcher {
         this.readInterval = readInterval;
 
         this.scLogEventHandler = eventHandler;
+        this.killEvent = eventHandler.eventHandlers.kill as KillEvent;
         this.fileBirthTime = new Date("1970-01-01 00:00:00");
 
         tpClient.logIt("DEBUG", `Created instance to watch file at ${this.logFilePath}`);
@@ -34,7 +37,8 @@ export class FileWatcher {
     }
 
     watchLogFile = () => {
-        this.stopWatchingFile()
+        this.stopWatchingFile();
+        this.killEvent.clearHistory();
 
         if (!fs.existsSync(this.logFilePath)) {
             this.tpClient.logIt('ERROR', `Log file at ${this.logFilePath} does not exist`);
@@ -50,57 +54,53 @@ export class FileWatcher {
         }
 
         this.timeout = setInterval(() => {
-            try {
-                fs.stat(this.logFilePath, (err, stats) => {
-                    if (err) {
-                        this.tpClient.logIt("ERROR", err.message);
-                        return;
-                    }
+            fs.stat(this.logFilePath, (err, stats) => {
+                if (err) {
+                    this.tpClient.logIt("ERROR", err.message);
+                    return;
+                }
 
-                    if (
-                        this.fileBirthTime === null
-                        || this.fileBirthTime.getTime() < stats.birthtime.getTime()
-                        || stats.size < this.lastFileSize
-                    ) {
-                        this.tpClient.logIt("DEBUG", "New logfile was (re-)created, resetting read offset");
-                        this.fileBirthTime = stats.birthtime;
-                        this.lastFileSize = 0;
-                    }
+                if (
+                    this.fileBirthTime === null
+                    || this.fileBirthTime.getTime() < stats.birthtime.getTime()
+                    || stats.size < this.lastFileSize
+                ) {
+                    this.tpClient.logIt("DEBUG", "New logfile was (re-)created, resetting read offset");
+                    this.fileBirthTime = stats.birthtime;
+                    this.lastFileSize = 0;
+                    this.killEvent.clearHistory();
+                }
 
-                    if (stats.size > this.lastFileSize) {
-                        const readStream = fs.createReadStream(this.logFilePath, {
-                            start: this.lastFileSize,
-                            end: stats.size
-                        });
+                if (stats.size > this.lastFileSize) {
+                    const readStream = fs.createReadStream(this.logFilePath, {
+                        start: this.lastFileSize,
+                        end: stats.size
+                    });
 
-                        let buffer = '';
+                    let buffer = '';
 
-                        readStream.on('data', (chunk) => {
-                            buffer += chunk.toString();
-                        });
+                    readStream.on('data', (chunk) => {
+                        buffer += chunk.toString();
+                    });
 
-                        readStream.on('end', () => {
-                            const lines = buffer.split(/\r?\n/);
-                            lines.forEach((line) => {
-                                if (!line) {
-                                    return;
+                    readStream.on('end', () => {
+                        const lines = buffer.split(/\r?\n/);
+                        lines.forEach((line) => {
+                            if (!line) {
+                                return;
+                            }
+
+                            Object.entries(this.scLogEventHandler.eventHandlers).forEach(([eventKey, handler]) => {
+                                if (line.includes(eventKey)) {
+                                    handler.handleEvent(line);
                                 }
-
-                                Object.entries(this.scLogEventHandler.eventHandlers).forEach(([eventKey, handler]) => {
-                                    if (line.includes(eventKey)) {
-                                        handler.handleEvent(line);
-                                    }
-                                });
                             });
-
-                            this.lastFileSize = stats.size;
                         });
-                    }
-                });
-            } catch (err) {
-                this.tpClient.logIt('ERROR', 'An error occurred reading the log file');
-                this.watchLogFile();
-            }
+
+                        this.lastFileSize = stats.size;
+                    });
+                }
+            });
         }, this.readInterval);
     }
 }
