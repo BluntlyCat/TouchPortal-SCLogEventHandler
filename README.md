@@ -59,3 +59,8 @@ on/off; default = off
 
 Shows a text with date, name of murderer and cause of death  
 In case no kill happened, the message 'No kill detected' is shown
+
+### sc_leh_kill_state_full
+
+Contains the full line of the kill event from Game.log  
+In case no kill happened, the line can be copied to clipboard by tipping on the kill message

@@ -60,5 +60,6 @@ module.exports = class ScLogEventHandler {
         }
 
         this.tpClient.stateUpdate('sc_leh_kill_state', killMsg);
+        this.tpClient.stateUpdate('sc_leh_kill_state_full', line);
     }
 }
