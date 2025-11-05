@@ -14,7 +14,6 @@ export class FileWatcher extends EventEmitter {
         private readonly tpClient: Client,
         private readonly logFilePath: string,
         private readonly encoding: BufferEncoding,
-        private readonly readInterval: number,
     ) {
         super();
         tpClient.logIt('DEBUG', `Created instance to watch file at ${this.logFilePath}`);
@@ -34,7 +33,6 @@ export class FileWatcher extends EventEmitter {
             this.tick().catch(err => this.emit('error', err));
         });
 
-        //this.timer = setInterval(() => this.tick().catch(err => this.emit('error', err)), this.readInterval);
         this.tick().catch(err => this.emit('error', err));
     }
 
@@ -59,7 +57,7 @@ export class FileWatcher extends EventEmitter {
         }
 
         const start = this.lastSize;
-        const end = stat.size;
+        const end = stat.size - 1;
 
         await new Promise<void>((resolve, reject) => {
             const stream = createReadStream(this.logFilePath, {start, end, encoding: this.encoding});

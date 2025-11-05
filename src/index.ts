@@ -10,8 +10,8 @@ import {
     RELEASE_URL,
     SC_ENVIRONMENT,
     SC_GAME_LOG_FILE,
-    SC_READ_LOG_INTERVAL,
-    SC_ROOT_PATH, UPDATE_URL,
+    SC_ROOT_PATH,
+    UPDATE_URL,
 } from './constants';
 import { KillEvent } from './events/kill/KillEvent';
 import { EventRouter } from './events/EventRouter';
@@ -45,8 +45,6 @@ const initPlugin = () => {
     actionRouter.register(new PrevKillMessage('sc_prev_kill_msg', killHistory, killEventView));
     actionRouter.register(new NextKillMessage('sc_next_kill_msg', killHistory, killEventView));
 
-    killHistory.clear();
-
     if (fileWatcher) {
         fileWatcher.stop();
     }
@@ -55,12 +53,11 @@ const initPlugin = () => {
         tpClient,
         `${pluginSettings[SC_ROOT_PATH]}\\${pluginSettings[SC_ENVIRONMENT]}\\${pluginSettings[SC_GAME_LOG_FILE]}`,
         'utf8',
-        +pluginSettings[SC_READ_LOG_INTERVAL],
     );
 
     try {
         fileWatcher.on('line', (e) => eventRouter.route(e));
-        fileWatcher.on('rotate', (e) => killHistory.clear());
+        fileWatcher.on('rotate', (_e) => killHistory.clear());
         fileWatcher.on('error', (e) => console.error(e));
 
         killHistory.clear();

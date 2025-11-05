@@ -2,7 +2,6 @@ import { BaseEventHandler } from '../BaseEvent';
 import { Client } from 'touchportal-api';
 import { KillHistory } from './KillHistory';
 import { Line } from '../types';
-import { KillData } from './KillData';
 import { KillEventView } from './KillEventView';
 
 export class KillEvent extends BaseEventHandler {
@@ -15,30 +14,25 @@ export class KillEvent extends BaseEventHandler {
     public handle(line: Line) {
         this._tpClient.logIt('DEBUG', 'Handle kill event');
         const killMatch = KillEvent.killRegex.exec(line.str);
-        let killData: KillData = {
-            rawLine: '',
-            victim: '',
-            killer: '',
-            time: '',
-            cause: '',
-        };
 
-        if (killMatch && killMatch.groups) {
-            const groups = killMatch.groups;
-            const timeStr = groups['timestamp'] || '';
-            const time = new Date(timeStr).toLocaleString();
-            const victim = groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
-            const killer = groups['killer'];
-            const cause = groups['dmgType'];
-
-            killData = {
-                rawLine: line.str,
-                victim,
-                killer,
-                time,
-                cause,
-            };
+        if (!killMatch || !killMatch.groups) {
+            return;
         }
+
+        const groups = killMatch.groups;
+        const timeStr = groups['timestamp'] || '';
+        const time = new Date(timeStr).toLocaleString();
+        const victim = groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
+        const killer = groups['killer'];
+        const cause = groups['dmgType'];
+
+        const killData = {
+            rawLine: line.str,
+            victim,
+            killer,
+            time,
+            cause,
+        };
 
         this._killHistory.add(killData);
         this._killEventView.update();

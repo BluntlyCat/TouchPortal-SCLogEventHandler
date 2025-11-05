@@ -38,13 +38,11 @@ export class KillHistory {
         return this._entries.length;
     }
 
-    public nextMessage(): HistoryEntry {
+    public nextMessage(): void {
         this._currentIndex = (this.currentIndex + 1) % this.entryCount;
-        return this.currentEntry;
     }
 
-    public previousMessage(): HistoryEntry {
+    public previousMessage(): void {
         this._currentIndex = (this.currentIndex - 1 + this.entryCount) % this.entryCount;
-        return this.currentEntry;
     }
 }

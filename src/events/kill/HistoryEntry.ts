@@ -9,6 +9,6 @@ export class HistoryEntry {
     }
 
     getMessage(index: number, entryCount: number) {
-        return `Event ${index}/${entryCount}:\t${this._killData.victim} was killed by ${this._killData.killer}\nWhen:\t${this._killData.time}\nCause:\t${this._killData.cause}`;
+        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this._killData.killer}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
     }
 }
