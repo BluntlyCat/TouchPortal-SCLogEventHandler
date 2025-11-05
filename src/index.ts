@@ -11,6 +11,7 @@ import {
     SC_ENVIRONMENT,
     SC_GAME_LOG_FILE,
     SC_READ_LOG_INTERVAL,
+    SC_BLACKLIST,
     SC_ROOT_PATH,
     UPDATE_URL,
 } from './constants';
@@ -22,6 +23,7 @@ import { NextKillMessage } from './actions/NextKillMessage';
 import { PrevKillMessage } from './actions/PrevKillMessage';
 import { KillHistory } from './events/kill/KillHistory';
 import { KillEventView } from './events/kill/KillEventView';
+import { Blacklist } from './events/kill/Blacklist';
 
 // Create an instance of the Touch Portal Client
 const tpClient = new TouchPortalAPI.Client();
@@ -30,14 +32,16 @@ const tpClient = new TouchPortalAPI.Client();
 let fileWatcher: FileWatcher;
 let eventRouter: EventRouter;
 let actionRouter: ActionRouter;
+let killEvent: KillEvent;
 
 const killHistory = new KillHistory();
 const killEventView = new KillEventView(tpClient, killHistory);
-const killEvent = new KillEvent(tpClient, killHistory, killEventView);
 
 const pluginSettings: Record<string, any> = {};
 
 const initPlugin = () => {
+    killEvent = new KillEvent(tpClient, killHistory, killEventView, new Blacklist(pluginSettings[SC_BLACKLIST]));
+
     eventRouter = new EventRouter();
     eventRouter.register(killEvent);
     eventRouter.register(new HelmetEvent(tpClient));

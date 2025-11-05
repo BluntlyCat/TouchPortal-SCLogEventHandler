@@ -3,11 +3,12 @@ import { Client } from 'touchportal-api';
 import { KillHistory } from './KillHistory';
 import { Line } from '../types';
 import { KillEventView } from './KillEventView';
+import { Blacklist } from './Blacklist';
 
 export class KillEvent extends BaseEventHandler {
     private static killRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+?Actor Death.+?Kill: '(?:(PU_\w+_(?<npc>NPC(?:_\w+)+))_\d+|(?<player>[A-Za-z0-9_-]+))'.+?in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'/;
 
-    constructor(tpClient: Client, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView) {
+    constructor(tpClient: Client, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView, private readonly _blacklist: Blacklist) {
         super(tpClient, 'kill');
     }
 
@@ -15,14 +16,15 @@ export class KillEvent extends BaseEventHandler {
         this._tpClient.logIt('DEBUG', 'Handle kill event');
         const killMatch = KillEvent.killRegex.exec(line.str);
 
-        if (!killMatch || !killMatch.groups) {
+        if (!killMatch || !killMatch.groups || !!killMatch.groups.npc) {
+            this._tpClient.logIt('DEBUG', 'Ignore kill because it is invalid or an NPC');
             return;
         }
 
         const groups = killMatch.groups;
         const timeStr = groups['timestamp'] || '';
         const time = new Date(timeStr).toLocaleString();
-        const victim = groups['npc'] ? this.formatNpcName(groups['npc']) : groups['player'];
+        const victim = groups['player'];
         const killer = groups['killer'];
         const cause = groups['dmgType'];
 
@@ -32,6 +34,7 @@ export class KillEvent extends BaseEventHandler {
             killer,
             time,
             cause,
+            killerOnBlacklist: this._blacklist.isBlacklisted(killer),
         };
 
         this._killHistory.add(killData);

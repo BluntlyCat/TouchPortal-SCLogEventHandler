@@ -12,12 +12,16 @@ export class KillEventView {
 
         let message = 'No kill detected';
         let rawLine = '';
+        let blacklisted = false;
+
         if (currentEntry) {
             message = currentEntry.getMessage(currentIndex + 1, entryCount);
             rawLine = currentEntry.rawLine;
+            blacklisted = currentEntry.blacklisted;
         }
 
         this._tpClient.stateUpdate('sc_leh_kill_state', message);
         this._tpClient.stateUpdate('sc_leh_kill_state_full', rawLine);
+        this._tpClient.stateUpdate('sc_killer_is_blacklisted', blacklisted ? '⚠️' : '');
     }
 }

@@ -4,4 +4,5 @@ export interface KillData {
     killer: string;
     time: string;
     cause: string;
+    killerOnBlacklist: boolean;
 }

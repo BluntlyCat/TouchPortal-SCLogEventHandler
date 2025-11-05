@@ -36,6 +36,15 @@
       "name": "Star Citizen Read Interval",
       "default": "500",
       "type": "number"
+    },
+    {
+      "name": "Star Citizen Blacklist",
+      "default": "",
+      "type": "multiline",
+      "tooltip": {
+        "title": "Blacklist",
+        "body": "Add one player per line to blacklist him"
+      }
     }
   ],
   "categories": [
@@ -72,6 +81,11 @@
         },
         {
           "id": "sc_leh_kill_state_full",
+          "type": "text",
+          "default": ""
+        },
+        {
+          "id": "sc_killer_is_blacklisted",
           "type": "text",
           "default": ""
         }
