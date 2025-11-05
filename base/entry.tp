@@ -31,6 +31,11 @@
       "name": "Star Citizen Game Log File",
       "default": "Game.log",
       "type": "text"
+    },
+    {
+      "name": "Star Citizen Read Interval",
+      "default": "500",
+      "type": "number"
     }
   ],
   "categories": [

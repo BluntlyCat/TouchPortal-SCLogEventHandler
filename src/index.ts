@@ -10,6 +10,7 @@ import {
     RELEASE_URL,
     SC_ENVIRONMENT,
     SC_GAME_LOG_FILE,
+    SC_READ_LOG_INTERVAL,
     SC_ROOT_PATH,
     UPDATE_URL,
 } from './constants';
@@ -53,11 +54,15 @@ const initPlugin = () => {
         tpClient,
         `${pluginSettings[SC_ROOT_PATH]}\\${pluginSettings[SC_ENVIRONMENT]}\\${pluginSettings[SC_GAME_LOG_FILE]}`,
         'utf8',
+        +pluginSettings[SC_READ_LOG_INTERVAL],
     );
 
     try {
         fileWatcher.on('line', (e) => eventRouter.route(e));
-        fileWatcher.on('rotate', (_e) => killHistory.clear());
+        fileWatcher.on('rotate', (_e) => {
+            killHistory.clear();
+            killEventView.update();
+        });
         fileWatcher.on('error', (e) => console.error(e));
 
         killHistory.clear();
