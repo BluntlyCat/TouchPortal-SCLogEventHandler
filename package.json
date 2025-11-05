@@ -5,8 +5,11 @@
   "main": "dist/index.ts",
   "bin": "dist/index.js",
   "scripts": {
-    "start": "node src/index.ts",
-    "build": "tsc && node scripts/build.js"
+    "dev": "tsx --inspect src/index.ts",
+    "dev:watch": "tsx watch --inspect src/index.ts",
+    "start": "node dist/index.js",
+    "compile": "tsc",
+    "build": "npm run compile && node scripts/build.js"
   },
   "keywords": [
     "TouchPortal",

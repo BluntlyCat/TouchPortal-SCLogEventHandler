@@ -1,23 +1,24 @@
 import {BaseEventHandler} from "./BaseEvent";
 import {Client} from "touchportal-api";
+import { Line } from './types';
 
 export class HelmetEvent extends BaseEventHandler {
     constructor(tpClient: Client) {
-        super(tpClient);
+        super(tpClient, 'helmet');
     }
 
-    public handleEvent(line: string): void {
+    public handle(line: Line): void {
         let helmetState = 'off';
-        if (line.includes('EquipItem')) {
+        if (line.str.includes('EquipItem')) {
             helmetState = 'on';
-        } else if (line.includes('StoreItem')) {
+        } else if (line.str.includes('StoreItem')) {
             helmetState = 'off';
-        } else if (line.includes('Armor_Helmet')) {
+        } else if (line.str.includes('Armor_Helmet')) {
             helmetState = 'on';
-        } else if (line.includes('helmethook_attach')) {
+        } else if (line.str.includes('helmethook_attach')) {
             helmetState = 'off';
         }
 
-        this.tpClient.stateUpdate('sc_leh_helmet_state', helmetState);
+        this._tpClient.stateUpdate('sc_leh_helmet_state', helmetState);
     }
 }
