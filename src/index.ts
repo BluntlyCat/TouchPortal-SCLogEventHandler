@@ -93,14 +93,20 @@ tpClient.on('Info', _data => {
     tpClient.logIt('DEBUG', 'Info: received initial connect from Touch-Portal');
 });
 
-tpClient.on('Update', (curVersion: string, newVersion: string) => {
-    tpClient.logIt('DEBUG', 'Update: there is an update curVersion:', curVersion, 'newVersion:', newVersion);
-    tpClient.sendNotification(
-        `${PLUGIN_ID}_update_notification_${newVersion}`,
-        `SC Event Handler Plugin Update Available`,
-        `\nNew Version: ${newVersion}\n\nPlease update to get the latest bug fixes and new features\n\nCurrent Installed Version: ${curVersion}`,
-        [ {id: `${PLUGIN_ID}_update_notification_go_to_download`, title: 'Go To Download Location'} ],
-    );
+tpClient.on('Update', (curVersion: string, remoteVersion: string) => {
+    tpClient.logIt('DEBUG', 'Update: there is an update curVersion:', curVersion, 'remoteVersion:', remoteVersion);
+    let optionsArray = [
+        {
+            "id":`${PLUGIN_ID}Update`,
+            "title":"Take Me to Download"
+        },
+        {
+            "id":`${PLUGIN_ID}Ignore`,
+            "title":"Ignore Update"
+        }
+    ];
+
+    tpClient.sendNotification(`${PLUGIN_ID}UpdateNotification`,"My Plugin has been updated", `A new version of my plugin ${remoteVersion} is available to download`, optionsArray);
 });
 
 tpClient.on('NotificationClicked', (data) => {
@@ -114,4 +120,4 @@ tpClient.on('Action', (actionData) => {
     actionRouter.route(actionData.actionId);
 });
 
-tpClient.connect({pluginId: PLUGIN_ID, updateUrl: UPDATE_URL});
+tpClient.connect({pluginId: PLUGIN_ID, "updateUrl": UPDATE_URL});
