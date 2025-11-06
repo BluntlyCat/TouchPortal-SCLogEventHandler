@@ -114,4 +114,4 @@ tpClient.on('Action', (actionData) => {
     actionRouter.route(actionData.actionId);
 });
 
-tpClient.connect({pluginId: PLUGIN_ID, updateUrl: pluginSettings[UPDATE_URL]});
+tpClient.connect({pluginId: PLUGIN_ID, updateUrl: UPDATE_URL});
