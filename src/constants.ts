@@ -4,5 +4,5 @@ export const SC_ENVIRONMENT = 'Star Citizen Environment';
 export const SC_GAME_LOG_FILE = 'Star Citizen Game Log File';
 export const SC_READ_LOG_INTERVAL = 'Star Citizen Read Interval';
 export const SC_BLACKLIST = 'Star Citizen Blacklist';
-export const UPDATE_URL = 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/main/base/entry.tp';
+export const UPDATE_URL = 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/refs/heads/main/base/entry.tp';
 export const RELEASE_URL = 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/releases';

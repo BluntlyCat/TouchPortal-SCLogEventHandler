@@ -1,6 +1,6 @@
 {
   "name": "touch_portal_star_citizen_tools",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Touch Portal plugin to read Star Citizen's Game.log and evaluate events",
   "main": "dist/index.ts",
   "bin": "dist/index.js",
