@@ -16,7 +16,7 @@ export class HistoryEntry {
         if (this.blacklisted) {
             return `**${this._killData.killer}**`;
         }
-        return `*${this._killData.killer}*`;
+        return `${this._killData.killer}`;
     }
 
     getMessage(index: number, entryCount: number) {
