@@ -105,6 +105,3 @@ dist
 
 # Jetbrains IDE files
 .idea/
-
-# Repo Specific
-Installers/
