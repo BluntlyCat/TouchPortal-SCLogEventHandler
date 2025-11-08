@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": "309",
+  "version": "310",
   "name": "Touch Portal Star Citizen Tools",
   "id": "touch_portal_star_citizen_tools",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.exe\"",

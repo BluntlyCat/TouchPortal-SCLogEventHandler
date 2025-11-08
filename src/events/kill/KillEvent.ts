@@ -4,48 +4,38 @@ import { KillHistory } from './KillHistory';
 import { Line } from '../types';
 import { KillEventView } from './KillEventView';
 import { Blacklist } from './Blacklist';
+import { PlayerKill } from './PlayerKill';
+import { NpcKill } from './NpcKill';
+import { KillData } from './KillData';
 
 export class KillEvent extends BaseEventHandler {
-    private static killRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+?Actor Death.+?Kill: '(?:(PU_\w+_(?<npc>NPC(?:_\w+)+))_\d+|(?<player>[A-Za-z0-9_-]+))'.+?in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'/;
+    private readonly _playerKill: PlayerKill;
+    private readonly _npcKill: NpcKill;
+    private readonly _killTypeRegex = /^.+CActor::Kill:\s'[A-z_]+_(?<npcId>\d+)'\s.+$/;
 
-    constructor(tpClient: Client, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView, private readonly _blacklist: Blacklist) {
+    constructor(tpClient: Client, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView, blacklist: Blacklist) {
         super(tpClient, 'kill');
+        this._playerKill = new PlayerKill(tpClient, 'player', blacklist);
+        this._npcKill = new NpcKill(tpClient, 'npc');
     }
 
     public handle(line: Line) {
         this._tpClient.logIt('DEBUG', 'Handle kill event');
-        const killMatch = KillEvent.killRegex.exec(line.str);
 
-        if (!killMatch || !killMatch.groups || !!killMatch.groups.npc) {
-            this._tpClient.logIt('DEBUG', 'Ignore kill because it is invalid or an NPC');
+        const killMatch = this._killTypeRegex.exec(line.str);
+        if (!killMatch || !killMatch.groups) {
+            this._tpClient.logIt('DEBUG', 'Ignore kill because it is invalid');
             return;
         }
 
-        const groups = killMatch.groups;
-        const timeStr = groups['timestamp'] || '';
-        const time = new Date(timeStr).toLocaleString();
-        const victim = groups['player'];
-        const killer = groups['killer'];
-        const cause = groups['dmgType'];
-
-        const killData = {
-            rawLine: line.str,
-            victim,
-            killer,
-            time,
-            cause,
-            killerOnBlacklist: this._blacklist.isBlacklisted(killer),
-        };
+        let killData: KillData;
+        if (!!killMatch.groups['npcId']) {
+            killData = this._npcKill.handle(line);
+        } else {
+            killData = this._playerKill.handle(line);
+        }
 
         this._killHistory.add(killData);
         this._killEventView.update();
     }
-
-    private formatNpcName = (rawName: string) => {
-        return rawName
-            .split('_')
-            .map(s => `${s.charAt(0).toUpperCase()}${s.slice(1)}`)
-            .join(' ')
-            .trim();
-    };
 }
