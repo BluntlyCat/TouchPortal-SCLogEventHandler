@@ -23,12 +23,7 @@ export class NpcKill implements Handler {
         this._tpClient.logIt('DEBUG', 'Handle npc kill event');
 
         const killMatch = this._npcKillRegex.exec(line.str);
-        if (!killMatch || !killMatch.groups) {
-            this._tpClient.logIt('DEBUG', 'Ignore kill because it is invalid');
-            return;
-        }
-
-        if (!!killMatch.groups['human']) {
+        if (!!killMatch?.groups['human']) {
             return this._humanoidKill.handle(line);
         } else {
             return this._petKill.handle(line);

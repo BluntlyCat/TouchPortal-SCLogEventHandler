@@ -3,7 +3,7 @@ import { Client } from 'touchportal-api';
 import { KillData } from './KillData';
 
 export class NpcPetKill implements Handler {
-    private readonly _npcPetKillRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+CActor::Kill:.+'(?<pet>(?<species>[A-z]+)_(?<class>[A-z]+)_(?<faction>[A-z]+)_(?<id>[0-9]+))'.+in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
+    private readonly _npcPetKillRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+CActor::Kill:.+'(?<pet>(?<species>[A-Za-z]+)_(?<class>[A-Za-z]+)_(?<faction>[A-Za-z]+)_(?<id>[0-9]+))'.+in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
 
     public constructor(private readonly _tpClient: Client, private readonly _key: string) {
     }

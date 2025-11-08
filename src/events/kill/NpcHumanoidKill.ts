@@ -3,7 +3,7 @@ import { Client } from 'touchportal-api';
 import { KillData } from './KillData';
 
 export class NpcHumanoidKill implements Handler {
-    private readonly _npcHumanKillRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+'(?<humanoid>NPC_Archetypes-(?<gender>[A-z]+)-(?<species>[A-z]+)-(?<faction>[A-z]+)_(?<class>[A-z]+)_(?<id>[0-9]+))'.+in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
+    private readonly _npcHumanKillRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+'(?<humanoid>NPC_Archetypes-(?<gender>[A-Za-z]+)-(?<species>[A-Za-z]+)-(?<faction>[A-Za-z]+)_((?<class>[A-Za-z]+)_)?(?<id>[0-9]+))'.+in zone '(?<zone>[\w_-]+)'.+?killed by '(?<killer>\w+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
 
     public constructor(private readonly _tpClient: Client, private readonly _key: string) {
     }
@@ -24,7 +24,8 @@ export class NpcHumanoidKill implements Handler {
         const groups = killMatch.groups;
         const timeStr = groups['timestamp'] || '';
         const time = new Date(timeStr).toLocaleString();
-        const victim = `${groups['species']} ${groups['faction']} ${groups['class']}`;
+        const cls = groups['class'] ? ` ${groups['class'][0].toUpperCase()}${groups['class'].slice(1)}` : '';
+        const victim = `${groups['species']} ${groups['faction']}${cls}`;
         const killer = groups['killer'];
         const cause = groups['dmgType'];
 
