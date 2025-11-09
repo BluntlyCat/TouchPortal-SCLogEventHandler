@@ -1,15 +1,12 @@
-import { IActorFilter } from './IActorFilter';
 import { Client } from 'touchportal-api';
+import { BaseFilter } from './BaseFilter';
 
-export class NpcPetFilter implements IActorFilter {
-    private readonly _validationRegex = /^[A-Za-z-_]+Pet_[A-Za-z-_]+[0-9]+$/;
-    private readonly _dataRegex = /(?<pet>(?<species>[A-Za-z]+)_(?<class>[A-Za-z]+)_(?<faction>[A-Za-z]+)_(?<id>[0-9]+))/;
+export class NpcPetFilter extends BaseFilter {
+    public constructor(tpClient: Client) {
+        const validationRegex = /^[A-Za-z-_]+Pet_[A-Za-z-_]+[0-9]+$/;
+        const dataRegex = /(?<pet>(?<species>[A-Za-z]+)_(?<class>[A-Za-z]+)_(?<faction>[A-Za-z]+)_(?<id>[0-9]+))/;
 
-    public constructor(private readonly _tpClient: Client) {
-    }
-
-    public isValid(actor: string): boolean {
-        return this._validationRegex.test(actor);
+        super(tpClient, validationRegex, dataRegex);
     }
 
     public exec(actor: string): string {

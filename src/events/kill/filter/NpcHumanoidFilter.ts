@@ -1,15 +1,12 @@
-import { IActorFilter } from './IActorFilter';
 import { Client } from 'touchportal-api';
+import { BaseFilter } from './BaseFilter';
 
-export class NpcHumanoidFilter implements IActorFilter {
-    private readonly _validationRegex = /^NPC_[A-Za-z-_]+_[0-9]+$/;
-    private readonly _dataRegex = /^(?<humanoid>NPC_Archetypes-(?<gender>[A-Za-z]+)-(?<species>[A-Za-z]+)-(?<faction>[A-Za-z]+)_((?<class>[A-Za-z]+)_)?(?<id>[0-9]+))$/;
+export class NpcHumanoidFilter extends BaseFilter {
+    public constructor(tpClient: Client) {
+        const validationRegex = /^NPC_[A-Za-z-_]+_[0-9]+$/;
+        const dataRegex = /^(?<humanoid>NPC_Archetypes-(?<gender>[A-Za-z]+)-(?<species>[A-Za-z]+)-(?<faction>[A-Za-z]+)_((?<class>[A-Za-z]+)_)?(?<id>[0-9]+))$/;
 
-    public constructor(private readonly _tpClient: Client) {
-    }
-
-    public isValid(actor: string): boolean {
-        return this._validationRegex.test(actor);
+        super(tpClient, validationRegex, dataRegex);
     }
 
     public exec(actor: string): string {
