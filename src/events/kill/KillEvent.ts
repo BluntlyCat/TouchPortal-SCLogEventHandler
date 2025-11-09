@@ -9,10 +9,11 @@ import { PlayerFilter } from './filter/PlayerFilter';
 import { NpcHumanoidFilter } from './filter/NpcHumanoidFilter';
 import { NpcPetFilter } from './filter/NpcPetFilter';
 import { FilterData } from './filter/FilterData';
+import { KillDataMatch, MurdererMatch, VictimMatch } from './types';
 
 export class KillEvent extends BaseEventHandler {
-    private readonly _victimRegex = /^.+CActor::Kill:\s'(?<victim>[A-Za-z-_0-9]+)'.+$/;
-    private readonly _murdererRegex = /^.+killed by\s'(?<murderer>[A-Za-z-_0-9]+)'.+$/;
+    private readonly _victimRegex = /^.+CActor::Kill:\s'(?<victim>[A-Za-z0-9_-]+)'.+$/;
+    private readonly _murdererRegex = /^.+killed by\s'(?<murderer>[A-Za-z0-9_-]+)'.+$/;
     private readonly _killDataRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+in zone '(?<zone>[\w_-]+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
     private readonly _actorFilter: IActorFilter[] = [];
 
@@ -20,7 +21,7 @@ export class KillEvent extends BaseEventHandler {
         tpClient: Client,
         private readonly _killHistory: KillHistory,
         private readonly _killEventView: KillEventView,
-        private readonly _blacklist: Blacklist
+        private readonly _blacklist: Blacklist,
     ) {
         super(tpClient, 'CActor::Kill');
 
@@ -36,7 +37,7 @@ export class KillEvent extends BaseEventHandler {
         const murdererMatch = this._murdererRegex.exec(line.str);
         const killDataMatch = this._killDataRegex.exec(line.str);
 
-        if (!this.isValidEvent(victimMatch, murdererMatch, killDataMatch)) {
+        if (!this.isVictimMatch(victimMatch) || !this.isMurdererMatch(murdererMatch) || !this.isKillDataMatch(killDataMatch)) {
             this._tpClient.logIt('ERROR', 'Invalid kill event, skipping');
             return;
         }
@@ -57,7 +58,7 @@ export class KillEvent extends BaseEventHandler {
             murderer: murdererData.actor,
             victim: victimData.actor,
             rawLine: line.str,
-            time: new Date(killDataMatch.groups.timestamp).toLocaleString(),
+            time: new Date(killDataMatch.groups.timestamp).toLocaleString(undefined, {hour12: false}),
             cause: killDataMatch.groups.dmgType,
             zone: killDataMatch.groups.zone,
             murdererOnBlacklist: this._blacklist.isBlacklisted(murdererData.actor),
@@ -67,35 +68,23 @@ export class KillEvent extends BaseEventHandler {
         this._killEventView.update();
     }
 
-    private isValidEvent(victimMatch: RegExpExecArray, murdererMatch: RegExpExecArray, killDataMatch: RegExpExecArray): boolean {
-        if (!victimMatch || !('victim' in victimMatch.groups) || !victimMatch.groups.victim) {
-            return false;
+    private getActor(actor: string): FilterData | null {
+        for (const filter of this._actorFilter) {
+            if (filter.isValid(actor)) return filter.exec(actor);
         }
-
-        if (!murdererMatch || !('murderer' in murdererMatch.groups) || !murdererMatch.groups.murderer) {
-            return false;
-        }
-
-        if (!killDataMatch) {
-            return false;
-        }
-
-        if (!('timestamp' in killDataMatch.groups) || !killDataMatch.groups.timestamp) {
-            return false;
-        }
-
-        if (!('zone' in killDataMatch.groups) || !killDataMatch.groups.zone) {
-            return false;
-        }
-
-        return ('dmgType' in killDataMatch.groups) && !!killDataMatch.groups.dmgType;
+        return null;
     }
 
-    private getActor(actor: string): FilterData|null {
-        for (const filter of this._actorFilter) {
-            if (filter.isValid(actor)) {
-                return filter.exec(actor);
-            }
-        }
+    private isVictimMatch(x: RegExpExecArray | null): x is VictimMatch {
+        return !!x?.groups?.victim;
+    }
+
+    private isMurdererMatch(x: RegExpExecArray | null): x is MurdererMatch {
+        return !!x?.groups?.murderer;
+    }
+
+    private isKillDataMatch(x: RegExpExecArray | null): x is KillDataMatch {
+        const g = x?.groups;
+        return !!(g?.timestamp && g?.zone && g?.dmgType);
     }
 }

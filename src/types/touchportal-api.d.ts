@@ -16,10 +16,6 @@ declare module "touchportal-api" {
         title: string;
     }
 
-    interface EventData {
-
-    }
-
     class Client {
         constructor(options?: ClientOptions);
         connect(options?: ConnectOptions): Promise<void> | void;

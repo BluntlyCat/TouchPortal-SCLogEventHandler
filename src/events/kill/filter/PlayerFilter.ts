@@ -4,16 +4,14 @@ import { ActorTypes, FilterData } from './FilterData';
 
 export class PlayerFilter extends BaseFilter {
     public constructor(tpClient: Client) {
-        const validationRegex = /^(?<player>[A-Za-z0-9_-]+)$/;
-        const dataRegex = /^(?<player>[A-Za-z0-9_-]+)$/;
-
-        super(tpClient, validationRegex, dataRegex);
+        const playerRegex = /^(?<player>[A-Za-z0-9_-]+)$/;
+        super(tpClient, playerRegex, playerRegex);
     }
 
     public exec(actor: string): FilterData|null {
         this._tpClient.logIt('DEBUG', 'Execute player filter');
         const match = this._dataRegex.exec(actor);
-        if (!match) {
+        if (!match?.groups?.player) {
             this._tpClient.logIt('ERROR', 'Invalid match, skipping');
             return null;
         }
