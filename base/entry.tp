@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": "340",
+  "version": "350",
   "name": "Touch Portal Star Citizen Tools",
   "id": "touch_portal_star_citizen_tools",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.exe\"",
@@ -28,6 +28,16 @@
       ]
     },
     {
+      "name": "Game Log File",
+      "default": "Game.log",
+      "type": "text"
+    },
+    {
+      "name": "Log File Read Interval",
+      "default": "500",
+      "type": "number"
+    },
+    {
       "name": "Language",
       "default": "en",
       "type": "choice",
@@ -52,16 +62,6 @@
       "default": "Europe/Berlin",
       "type": "text",
       "parentGroup": "Language"
-    },
-    {
-      "name": "Game Log File",
-      "default": "Game.log",
-      "type": "text"
-    },
-    {
-      "name": "Log File Read Interval",
-      "default": "500",
-      "type": "number"
     },
     {
       "name": "Player Blacklist",
@@ -96,17 +96,17 @@
       ],
       "states": [
         {
-          "id": "sc_leh_helmet_state",
+          "id": "sc_helmet_state",
           "type": "text",
           "default": "off"
         },
         {
-          "id": "sc_leh_kill_state",
+          "id": "sc_kill_state",
           "type": "text",
           "default": "No kill detected"
         },
         {
-          "id": "sc_leh_kill_state_full",
+          "id": "sc_kill_state_full",
           "type": "text",
           "default": ""
         },
@@ -119,6 +119,11 @@
           "id": "sc_murderer_type",
           "type": "text",
           "default": ""
+        },
+        {
+          "id": "sc_kill_count",
+          "type": "text",
+          "default": "0"
         },
         {
           "id": "sc_player_dossier_url",

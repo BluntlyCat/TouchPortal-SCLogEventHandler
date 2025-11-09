@@ -1,66 +1,119 @@
 # TouchPortal Star Citizen Log Event Handler
 
-Read Data from Game.log and show equip status of helmet and kill events
+Read data from `Game.log` and display the helmet equip status and kill events.
 
-Kudos to @spdermn02 as I used his Hardware Monitor plugin as basis and for understanding how things work!
+Kudos to **@spdermn02** — this plugin uses parts of his Hardware Monitor plugin as a basis and for understanding how things work.
+
+---
 
 ## Usage
 
-Go to plugin settings and check if the root folder fits to yours.  
-After that the plugin should be operational.
+Open the plugin settings and verify that the Star Citizen root folder matches your installation.  
+After that, the plugin should be operational.
+
+---
 
 ## Plugin Settings
 
-The plugin can be controlled by several settings.  
-The default values should work just fine for the majority.  
-However, in case you installed Star Citizen at a different location  
-or want to use it also on PTU you can adjust it here. 
+The plugin can be controlled via several settings.  
+The default values should work for most users.  
+If you installed Star Citizen in a different location, or want to read logs from PTU/EPTU, adjust the settings here.
 
 ### Star Citizen Root Directory
 
 The root folder of Star Citizen.  
-By default, this is located at C:\Program Files\Roberts Space Industries\StarCitizen  
-but can be changed to any other location here.
+By default:  
+`C:\Program Files\Roberts Space Industries\StarCitizen`  
+You can change this to any other location.
 
-### Star Citizen Environment
+### Game Environment
 
-You can change the environment which is used here. The default environment is *LIVE*.  
-Currently supported options are:
+Select which environment to read logs from. The default is **LIVE**.  
+Supported options:
 
-- LIVE
-- HOTFIX
-- PTU
-- EPTU
+- `LIVE`
+- `HOTFIX`
+- `PTU`
+- `EPTU`
 
-If you change this value to any of them, the appropriate log file of the selected environment will be read.
+When changed, the plugin will read the appropriate log file for the selected environment.
 
-### Star Citizen Game Log File
+### Game Log File
 
-This is the file where Star Citizen logs are written. It defaults to Game.log and should not be changed!  
-Why does this setting then exist? Just in case the file name changes in the future.
+The file where Star Citizen writes logs. Defaults to `Game.log` and normally should not be changed.  
+This setting exists in case the filename changes in the future.
 
-### Star Citizen Read Interval
+### Log File Read Interval
 
-This value controls the frequency the game log file is re-read and defaults to 500ms.  
-This should work just fine as the plugin will not read the whole file every 500ms but the changed lines.  
-However, in case you need to reduce the workload, you can increase the value here.
+How often the log file is re-read (default: **500 ms**).  
+Only the newly appended lines are processed each cycle.  
+Increase this value if you need to reduce workload.
+
+### Language
+
+Language for certain strings in the kill message.  
+Supported:
+
+- English
+- German
+
+### Date Locale
+
+Locale used to format dates/times in kill messages.  
+Supported:
+
+- `en-US`
+- `de-DE`
+
+### Timezone
+
+Your timezone, used to show kill times correctly based on your location.  
+Any valid IANA timezone is accepted (e.g., `Europe/Berlin`, `Asia/Tokyo`, …).
+
+### Player Blacklist
+
+A simple multi-line text field where player handles can be entered, **one per line**.
+
+---
 
 ## States
 
-currently the following states are supported:
+The following states are available:
 
-### sc_leh_helmet_state
+### `sc_helmet_state`
 
-Can be used to indicate whether the helmet is worn or not
+Indicates whether the helmet is worn.  
+Values: `on` / `off` (default: `off`)
 
-on/off; default = off
+### `sc_kill_state`
 
-### sc_leh_kill_state
+Shows a compact text containing date/time, murderer name, and cause of death.  
+If no kill has been detected, shows **“No kill detected.”**  
 
-Shows a text with date, name of murderer and cause of death  
-In case no kill happened, the message 'No kill detected' is shown
+⚠️ If you get killed by “unknown” — that’s probably actually their handle.
 
-### sc_leh_kill_state_full
+### `sc_kill_state_full`
 
-Contains the full line of the kill event from Game.log  
-In case no kill happened, the line can be copied to clipboard by tipping on the kill message
+Contains the full kill-event line from `Game.log`.  
+Tap the kill message to copy the line to the clipboard.  
+If no kill has been detected, shows **“No kill detected.”**
+
+### `sc_murderer_is_blacklisted`
+
+Indicates whether the murderer is on the player blacklist.
+
+### `sc_murderer_type`
+
+One of:
+
+- `player`: Another player
+- `humanoid`: Any humanoid NPC
+- `pet`: An animal NPC (e.g., Kopion)
+
+### `sc_kill_count`
+
+Number of entries stored in the kill-event history.
+
+### `sc_player_dossier_url`
+
+If the murderer is a player (see `sc_murderer_type`), this contains the URL to the murderer’s RSI dossier page.

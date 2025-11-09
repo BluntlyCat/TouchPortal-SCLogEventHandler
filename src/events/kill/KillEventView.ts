@@ -32,10 +32,12 @@ export class KillEventView {
             playerDossierUrl = currentEntry.murdererType === ActorTypes.player ? `${CITIZEN_DOSSIER_BASE_URL}/${currentEntry.murderer}` : '';
         }
 
-        this._tpClient.stateUpdate('sc_leh_kill_state', message);
-        this._tpClient.stateUpdate('sc_leh_kill_state_full', rawLine);
+        this._tpClient.stateUpdate('sc_kill_state', message);
+        this._tpClient.stateUpdate('sc_kill_state_full', rawLine);
+        this._tpClient.stateUpdate('sc_kill_state_full', rawLine);
         this._tpClient.stateUpdate('sc_murderer_is_blacklisted', blacklisted ? 'yes' : 'no');
         this._tpClient.stateUpdate('sc_murderer_type', murdererType);
+        this._tpClient.stateUpdate('sc_kill_count', entryCount);
         this._tpClient.stateUpdate('sc_player_dossier_url', playerDossierUrl);
     }
 }
