@@ -1,5 +1,6 @@
 import { Client } from 'touchportal-api';
 import { BaseFilter } from './BaseFilter';
+import { ActorTypes, FilterData } from './FilterData';
 
 export class NpcHumanoidFilter extends BaseFilter {
     public constructor(tpClient: Client) {
@@ -9,15 +10,18 @@ export class NpcHumanoidFilter extends BaseFilter {
         super(tpClient, validationRegex, dataRegex);
     }
 
-    public exec(actor: string): string {
+    public exec(actor: string): FilterData|null {
         this._tpClient.logIt('DEBUG', 'Execute NPC humanoid filter');
         const match = this._dataRegex.exec(actor);
         if (!match) {
             this._tpClient.logIt('ERROR', 'Invalid match, skipping');
-            return '';
+            return null;
         }
 
         const cls = match.groups.class ? ` ${match.groups.class[0].toUpperCase()}${match.groups.class.slice(1)}` : '';
-        return `${match.groups.species} ${match.groups.faction}${cls}`;
+        return {
+            actor: `${match.groups.species} ${match.groups.faction}${cls}`,
+            type: ActorTypes.humanoid,
+        };
     }
 }

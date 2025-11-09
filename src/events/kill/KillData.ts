@@ -1,3 +1,5 @@
+import { ActorTypes } from './filter/FilterData';
+
 export interface KillData {
     rawLine: string;
     victim: string;
@@ -6,4 +8,5 @@ export interface KillData {
     cause: string;
     zone: string;
     murdererOnBlacklist: boolean;
+    murdererType: ActorTypes;
 }

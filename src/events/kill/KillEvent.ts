@@ -8,6 +8,7 @@ import { IActorFilter } from './filter/IActorFilter';
 import { PlayerFilter } from './filter/PlayerFilter';
 import { NpcHumanoidFilter } from './filter/NpcHumanoidFilter';
 import { NpcPetFilter } from './filter/NpcPetFilter';
+import { FilterData } from './filter/FilterData';
 
 export class KillEvent extends BaseEventHandler {
     private readonly _victimRegex = /^.+CActor::Kill:\s'(?<victim>[A-Za-z-_0-9]+)'.+$/;
@@ -40,26 +41,27 @@ export class KillEvent extends BaseEventHandler {
             return;
         }
 
-        const victim = this.getActor(victimMatch.groups.victim);
-        if (!victim) {
+        const victimData = this.getActor(victimMatch.groups.victim);
+        if (!victimData) {
             this._tpClient.logIt('ERROR', 'Invalid victim, skipping');
             return;
         }
 
-        const murderer = this.getActor(murdererMatch.groups.murderer);
-        if (!murderer) {
+        const murdererData = this.getActor(murdererMatch.groups.murderer);
+        if (!murdererData) {
             this._tpClient.logIt('ERROR', 'Invalid murderer, skipping');
             return;
         }
 
         this._killHistory.add({
-            murderer: murderer,
-            victim: victim,
+            murderer: murdererData.actor,
+            victim: victimData.actor,
             rawLine: line.str,
             time: new Date(killDataMatch.groups.timestamp).toLocaleString(),
             cause: killDataMatch.groups.dmgType,
             zone: killDataMatch.groups.zone,
-            murdererOnBlacklist: this._blacklist.isBlacklisted(murderer),
+            murdererOnBlacklist: this._blacklist.isBlacklisted(murdererData.actor),
+            murdererType: murdererData.type,
         });
 
         this._killEventView.update();
@@ -89,7 +91,7 @@ export class KillEvent extends BaseEventHandler {
         return ('dmgType' in killDataMatch.groups) && !!killDataMatch.groups.dmgType;
     }
 
-    private getActor(actor: string): string {
+    private getActor(actor: string): FilterData|null {
         for (const filter of this._actorFilter) {
             if (filter.isValid(actor)) {
                 return filter.exec(actor);

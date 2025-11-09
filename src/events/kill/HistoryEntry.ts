@@ -1,4 +1,5 @@
 import { KillData } from './KillData';
+import { ActorTypes } from './filter/FilterData';
 
 export class HistoryEntry {
     public constructor(private readonly _killData: KillData) {
@@ -13,13 +14,21 @@ export class HistoryEntry {
     }
 
     get murderer(): string {
-        if (this.blacklisted) {
-            return `**${this._killData.murderer}**`;
-        }
         return `${this._killData.murderer}`;
     }
 
+    get murdererFormatted(): string {
+        if (this.blacklisted) {
+            return `**${this.murderer}**`;
+        }
+        return this.murderer;
+    }
+
+    get murdererType() : ActorTypes {
+        return this._killData.murdererType;
+    }
+
     getMessage(index: number, entryCount: number) {
-        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murderer}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
+        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murdererFormatted}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
     }
 }

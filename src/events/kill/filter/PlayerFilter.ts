@@ -1,5 +1,6 @@
 import { Client } from 'touchportal-api';
 import { BaseFilter } from './BaseFilter';
+import { ActorTypes, FilterData } from './FilterData';
 
 export class PlayerFilter extends BaseFilter {
     public constructor(tpClient: Client) {
@@ -9,14 +10,17 @@ export class PlayerFilter extends BaseFilter {
         super(tpClient, validationRegex, dataRegex);
     }
 
-    public exec(actor: string): string {
+    public exec(actor: string): FilterData|null {
         this._tpClient.logIt('DEBUG', 'Execute player filter');
         const match = this._dataRegex.exec(actor);
         if (!match) {
             this._tpClient.logIt('ERROR', 'Invalid match, skipping');
-            return '';
+            return null;
         }
 
-        return match.groups.player;
+        return {
+            actor: match.groups.player,
+            type: ActorTypes.player,
+        };
     }
 }

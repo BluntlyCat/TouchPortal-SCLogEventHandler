@@ -1,5 +1,6 @@
 import { Client } from 'touchportal-api';
 import { BaseFilter } from './BaseFilter';
+import { ActorTypes, FilterData } from './FilterData';
 
 export class NpcPetFilter extends BaseFilter {
     public constructor(tpClient: Client) {
@@ -9,15 +10,18 @@ export class NpcPetFilter extends BaseFilter {
         super(tpClient, validationRegex, dataRegex);
     }
 
-    public exec(actor: string): string {
+    public exec(actor: string): FilterData|null {
         this._tpClient.logIt('DEBUG', 'Execute NPC pet filter');
 
         const match = this._dataRegex.exec(actor);
         if (!match) {
             this._tpClient.logIt('ERROR', 'Invalid match, skipping');
-            return '';
+            return null;
         }
 
-        return match.groups.species;
+        return {
+            actor: match.groups.species,
+            type: ActorTypes.pet,
+        };
     }
 }

@@ -1,5 +1,6 @@
 import { IActorFilter } from './IActorFilter';
 import { Client } from 'touchportal-api';
+import { FilterData } from './FilterData';
 
 export abstract class BaseFilter implements IActorFilter {
     protected constructor(
@@ -13,5 +14,5 @@ export abstract class BaseFilter implements IActorFilter {
         return this._validationRegex.test(actor);
     }
 
-    public abstract exec(actor: string): string;
+    public abstract exec(actor: string): FilterData|null;
 }
