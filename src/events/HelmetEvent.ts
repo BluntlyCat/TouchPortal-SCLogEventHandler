@@ -19,6 +19,6 @@ export class HelmetEvent extends BaseEventHandler {
             helmetState = 'off';
         }
 
-        this._tpClient.stateUpdate('sc_leh_helmet_state', helmetState);
+        this._tpClient.stateUpdate('sc_helmet_state', helmetState);
     }
 }

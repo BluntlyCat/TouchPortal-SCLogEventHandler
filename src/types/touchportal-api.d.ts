@@ -21,8 +21,9 @@ declare module "touchportal-api" {
         connect(options?: ConnectOptions): Promise<void> | void;
         on(event: string, handler: (...args: any[]) => void): void;
         logIt(level: "INFO" | "WARN" | "ERROR" | "DEBUG", message: string, ...args: any[]): void;
-        sendNotification(id: string, title: string, message: string, actions: NotifyAction[]);
-        stateUpdate(stateId: string, value: any);
+        sendNotification(id: string, title: string, message: string, actions: NotifyAction[]): void;
+        stateUpdate(stateId: string, value: any, instanceId?: number): void;
+        stateUpdateMany(states: {id: string, value: any}[]): void;
     }
 
     const TouchPortalAPI: {

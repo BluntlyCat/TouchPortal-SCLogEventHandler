@@ -8,7 +8,7 @@ export class KillEventView {
         private readonly _tpClient: Client,
         private readonly _killHistory: KillHistory,
         private readonly _dateLocale: string,
-        private readonly _timezone: string
+        private readonly _timezone: string,
     ) {
     }
 
@@ -32,12 +32,16 @@ export class KillEventView {
             playerDossierUrl = currentEntry.murdererType === ActorTypes.player ? `${CITIZEN_DOSSIER_BASE_URL}/${currentEntry.murderer}` : '';
         }
 
-        this._tpClient.stateUpdate('sc_kill_state', message);
-        this._tpClient.stateUpdate('sc_kill_state_full', rawLine);
-        this._tpClient.stateUpdate('sc_kill_state_full', rawLine);
-        this._tpClient.stateUpdate('sc_murderer_is_blacklisted', blacklisted ? 'yes' : 'no');
-        this._tpClient.stateUpdate('sc_murderer_type', murdererType);
-        this._tpClient.stateUpdate('sc_kill_count', entryCount);
-        this._tpClient.stateUpdate('sc_player_dossier_url', playerDossierUrl);
+        const states = [
+            {id: 'sc_kill_state', value: message},
+            {id: 'sc_kill_state_full', value: rawLine},
+            {id: 'sc_murderer_is_blacklisted', value: blacklisted ? 'yes' : 'no'},
+            {id: 'sc_murderer_type', value: murdererType},
+            {id: 'sc_kill_count', value: entryCount},
+            {id: 'sc_player_dossier_url', value: playerDossierUrl},
+        ];
+        this._tpClient.stateUpdateMany(states);
+
+        this._tpClient.logIt('DEBUG', `STATES UPDATED`, blacklisted, murdererType, entryCount, playerDossierUrl);
     }
 }
