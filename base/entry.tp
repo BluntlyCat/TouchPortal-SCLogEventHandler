@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": "330",
+  "version": "331",
   "name": "Touch Portal Star Citizen Tools",
   "id": "touch_portal_star_citizen_tools",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.exe\"",
@@ -16,7 +16,7 @@
       "type": "text"
     },
     {
-      "name": "Star Citizen Environment",
+      "name": "Game Environment",
       "default": "LIVE",
       "type": "choice",
       "parentGroup": "Environments",
@@ -28,17 +28,28 @@
       ]
     },
     {
-      "name": "Star Citizen Game Log File",
+      "name": "Locale",
+      "default": "en-US",
+      "type": "choice",
+      "parentGroup": "Language",
+      "choices": [
+        "de-DE",
+        "en-US",
+        "en-DE"
+      ]
+    },
+    {
+      "name": "Game Log File",
       "default": "Game.log",
       "type": "text"
     },
     {
-      "name": "Star Citizen Read Interval",
+      "name": "Log File Read Interval",
       "default": "500",
       "type": "number"
     },
     {
-      "name": "Star Citizen Blacklist",
+      "name": "Player Blacklist",
       "default": "",
       "type": "multiline",
       "tooltip": {

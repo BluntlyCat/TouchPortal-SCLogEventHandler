@@ -28,7 +28,11 @@ export class HistoryEntry {
         return this._killData.murdererType;
     }
 
-    getMessage(index: number, entryCount: number) {
-        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murdererFormatted}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
+    get time(): string {
+        return this._killData.time;
+    }
+
+    getMessage(index: number, entryCount: number, time: string) {
+        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murdererFormatted}\nWhen: ${time}\nCause: ${this._killData.cause}`;
     }
 }

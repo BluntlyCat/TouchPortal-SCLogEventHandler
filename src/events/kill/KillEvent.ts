@@ -58,7 +58,7 @@ export class KillEvent extends BaseEventHandler {
             murderer: murdererData.actor,
             victim: victimData.actor,
             rawLine: line.str,
-            time: new Date(killDataMatch.groups.timestamp).toLocaleString(undefined, {hour12: false}),
+            time: killDataMatch.groups.timestamp,
             cause: killDataMatch.groups.dmgType,
             zone: killDataMatch.groups.zone,
             murdererOnBlacklist: this._blacklist.isBlacklisted(murdererData.actor),

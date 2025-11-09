@@ -1,7 +1,6 @@
 /*
  * This file includes code from Jameson Allen
  */
-
 import TouchPortalAPI from 'touchportal-api';
 import { open } from 'out-url';
 import { FileWatcher } from './fileWatcher/FileWatcher';
@@ -14,6 +13,7 @@ import {
     SC_BLACKLIST,
     SC_ROOT_PATH,
     UPDATE_URL,
+    SC_LOCALE,
 } from './constants';
 import { KillEvent } from './events/kill/KillEvent';
 import { EventRouter } from './events/EventRouter';
@@ -33,13 +33,19 @@ let fileWatcher: FileWatcher;
 let eventRouter: EventRouter;
 let actionRouter: ActionRouter;
 let killEvent: KillEvent;
+let killEventView: KillEventView;
 
 const killHistory = new KillHistory(tpClient);
-const killEventView = new KillEventView(tpClient, killHistory);
 
 const pluginSettings: Record<string, any> = {};
 
+tpClient.logIt('DEBUG', `icu=${process.versions.icu}`);
+tpClient.logIt('DEBUG', `NODE_ICU_DATA=${process.env.NODE_ICU_DATA}`);
+tpClient.logIt('DEBUG', `supported=${Intl.DateTimeFormat.supportedLocalesOf(['de-DE','en-US']).join(',')}`);
+tpClient.logIt('DEBUG', `probe=${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}`);
+
 const initPlugin = () => {
+    killEventView = new KillEventView(tpClient, killHistory, pluginSettings[SC_LOCALE]);
     killEvent = new KillEvent(tpClient, killHistory, killEventView, new Blacklist(pluginSettings[SC_BLACKLIST]));
 
     eventRouter = new EventRouter();
@@ -83,7 +89,7 @@ tpClient.on('Settings', (data) => {
     data.forEach((setting: any) => {
         let key = Object.keys(setting)[0] || '';
         pluginSettings[key] = setting[key];
-        tpClient.logIt('DEBUG', `Settings: Setting received for | ${key} |`);
+        tpClient.logIt('DEBUG', `Settings: Setting received for | ${key}:${setting[key]} |`);
     });
 
     initPlugin();

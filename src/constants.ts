@@ -1,9 +1,10 @@
 export const PLUGIN_ID = 'touch_portal_star_citizen_tools';
 export const SC_ROOT_PATH = 'Star Citizen Root Directory';
-export const SC_ENVIRONMENT = 'Star Citizen Environment';
-export const SC_GAME_LOG_FILE = 'Star Citizen Game Log File';
-export const SC_READ_LOG_INTERVAL = 'Star Citizen Read Interval';
-export const SC_BLACKLIST = 'Star Citizen Blacklist';
+export const SC_ENVIRONMENT = 'Game Environment';
+export const SC_LOCALE = 'Locale';
+export const SC_GAME_LOG_FILE = 'Game Log File';
+export const SC_READ_LOG_INTERVAL = 'Log File Read Interval';
+export const SC_BLACKLIST = 'Player Blacklist';
 export const UPDATE_URL = 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/refs/heads/main/base/entry.tp';
 export const RELEASE_URL = 'https://raw.githubusercontent.com/BluntlyCat/TouchPortal-SCLogEventHandler/releases';
 export const CITIZEN_DOSSIER_BASE_URL = 'https://robertsspaceindustries.com/en/citizens'
