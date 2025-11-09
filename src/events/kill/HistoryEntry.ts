@@ -9,17 +9,17 @@ export class HistoryEntry {
     }
 
     get blacklisted(): boolean {
-        return this._killData.killerOnBlacklist;
+        return this._killData.murdererOnBlacklist;
     }
 
-    get killer(): string {
+    get murderer(): string {
         if (this.blacklisted) {
-            return `**${this._killData.killer}**`;
+            return `**${this._killData.murderer}**`;
         }
-        return `${this._killData.killer}`;
+        return `${this._killData.murderer}`;
     }
 
     getMessage(index: number, entryCount: number) {
-        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.killer}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
+        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murderer}\nWhen: ${this._killData.time}\nCause: ${this._killData.cause}`;
     }
 }

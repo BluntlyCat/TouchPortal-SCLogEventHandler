@@ -34,7 +34,7 @@ let eventRouter: EventRouter;
 let actionRouter: ActionRouter;
 let killEvent: KillEvent;
 
-const killHistory = new KillHistory();
+const killHistory = new KillHistory(tpClient);
 const killEventView = new KillEventView(tpClient, killHistory);
 
 const pluginSettings: Record<string, any> = {};

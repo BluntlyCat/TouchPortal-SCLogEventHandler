@@ -1,16 +1,18 @@
 import { HistoryEntry } from './HistoryEntry';
 import { KillData } from './KillData';
+import { Client } from 'touchportal-api';
 
 export class KillHistory {
     private _entries: HistoryEntry[];
     private _currentIndex = 0;
 
-    constructor() {
+    constructor(private readonly _tpClient: Client) {
     }
 
     public add(killData: KillData) {
         this._entries.push(new HistoryEntry(killData));
         this._currentIndex = this._entries.length - 1;
+        this._tpClient.logIt('INFO', `Added new kill entry, having ${this.entryCount} entries now`);
     }
 
     public get currentEntry(): HistoryEntry {

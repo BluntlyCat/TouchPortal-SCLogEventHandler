@@ -1,8 +1,9 @@
 export interface KillData {
     rawLine: string;
     victim: string;
-    killer: string;
+    murderer: string;
     time: string;
     cause: string;
-    killerOnBlacklist: boolean;
+    zone: string;
+    murdererOnBlacklist: boolean;
 }

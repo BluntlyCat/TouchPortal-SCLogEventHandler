@@ -9,6 +9,9 @@ export class EventRouter {
 
     public route(line: Line) {
         for (const h of this._handlers) {
+            if (line.str.includes('kill')) {
+                let t = 0;
+            }
             const re = new RegExp(`\\b${this.escapeRegex(h.key)}\\b`, 'i');
             if (re.test(line.str)) {
                 h.handle(line);
