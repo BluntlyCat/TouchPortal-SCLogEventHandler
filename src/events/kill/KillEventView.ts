@@ -4,7 +4,12 @@ import { ActorTypes } from './filter/FilterData';
 import { CITIZEN_DOSSIER_BASE_URL } from '../../constants';
 
 export class KillEventView {
-    public constructor(private readonly _tpClient: Client, private readonly _killHistory: KillHistory, private readonly _locale: string) {
+    public constructor(
+        private readonly _tpClient: Client,
+        private readonly _killHistory: KillHistory,
+        private readonly _dateLocale: string,
+        private readonly _timezone: string
+    ) {
     }
 
     public update() {
@@ -19,7 +24,7 @@ export class KillEventView {
         let playerDossierUrl = '';
 
         if (currentEntry) {
-            const time = new Date(currentEntry.time).toLocaleString(this._locale);
+            const time = new Date(currentEntry.time).toLocaleString(this._dateLocale, {timeZone: this._timezone});
             message = currentEntry.getMessage(currentIndex + 1, entryCount, time);
             rawLine = currentEntry.rawLine;
             blacklisted = currentEntry.blacklisted;

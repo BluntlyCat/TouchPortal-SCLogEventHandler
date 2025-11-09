@@ -1,6 +1,6 @@
 {
   "sdk": 6,
-  "version": "331",
+  "version": "340",
   "name": "Touch Portal Star Citizen Tools",
   "id": "touch_portal_star_citizen_tools",
   "plugin_start_cmd": "\"%TP_PLUGIN_FOLDER%touch_portal_star_citizen_tools\\touch_portal_star_citizen_tools.exe\"",
@@ -28,15 +28,30 @@
       ]
     },
     {
-      "name": "Locale",
+      "name": "Language",
+      "default": "en",
+      "type": "choice",
+      "parentGroup": "Language",
+      "choices": [
+        "de",
+        "en"
+      ]
+    },
+    {
+      "name": "Date Locale",
       "default": "en-US",
       "type": "choice",
       "parentGroup": "Language",
       "choices": [
         "de-DE",
-        "en-US",
-        "en-DE"
+        "en-US"
       ]
+    },
+    {
+      "name": "Timezone",
+      "default": "Europe/Berlin",
+      "type": "text",
+      "parentGroup": "Language"
     },
     {
       "name": "Game Log File",

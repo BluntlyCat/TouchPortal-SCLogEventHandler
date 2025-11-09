@@ -1,8 +1,12 @@
 import { KillData } from './KillData';
 import { ActorTypes } from './filter/FilterData';
+import { Languages, TRANSLATIONS } from '../../translations';
 
 export class HistoryEntry {
-    public constructor(private readonly _killData: KillData) {
+    private readonly _translations: Record<string, string>;
+
+    public constructor(private readonly _killData: KillData, locale: Languages) {
+        this._translations = TRANSLATIONS[locale];
     }
 
     get rawLine(): string {
@@ -24,7 +28,7 @@ export class HistoryEntry {
         return this.murderer;
     }
 
-    get murdererType() : ActorTypes {
+    get murdererType(): ActorTypes {
         return this._killData.murdererType;
     }
 
@@ -33,6 +37,10 @@ export class HistoryEntry {
     }
 
     getMessage(index: number, entryCount: number, time: string) {
-        return `Event ${index}/${entryCount}: ${this._killData.victim} was killed by ${this.murdererFormatted}\nWhen: ${time}\nCause: ${this._killData.cause}`;
+        return `${index}/${entryCount}: ${this._killData.victim} ${this._translations['killedBy']} ${this.murdererFormatted}\n${this._translations['when']}: ${time}\n${this._translations['cause']}: ${this.getCause(this._killData.cause)}`;
+    }
+
+    private getCause(cause: string): string {
+        return this._translations[cause.toLowerCase()] || cause;
     }
 }

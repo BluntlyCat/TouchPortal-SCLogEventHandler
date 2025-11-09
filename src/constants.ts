@@ -1,7 +1,9 @@
 export const PLUGIN_ID = 'touch_portal_star_citizen_tools';
 export const SC_ROOT_PATH = 'Star Citizen Root Directory';
 export const SC_ENVIRONMENT = 'Game Environment';
-export const SC_LOCALE = 'Locale';
+export const SC_LANGUAGE = 'Language';
+export const SC_DATE_LOCALE = 'Date Locale';
+export const SC_TIMEZONE = 'Timezone';
 export const SC_GAME_LOG_FILE = 'Game Log File';
 export const SC_READ_LOG_INTERVAL = 'Log File Read Interval';
 export const SC_BLACKLIST = 'Player Blacklist';

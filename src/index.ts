@@ -13,7 +13,8 @@ import {
     SC_BLACKLIST,
     SC_ROOT_PATH,
     UPDATE_URL,
-    SC_LOCALE,
+    SC_DATE_LOCALE,
+    SC_TIMEZONE, SC_LANGUAGE,
 } from './constants';
 import { KillEvent } from './events/kill/KillEvent';
 import { EventRouter } from './events/EventRouter';
@@ -24,6 +25,7 @@ import { PrevKillMessage } from './actions/PrevKillMessage';
 import { KillHistory } from './events/kill/KillHistory';
 import { KillEventView } from './events/kill/KillEventView';
 import { Blacklist } from './events/kill/Blacklist';
+import { Languages } from './translations';
 
 // Create an instance of the Touch Portal Client
 const tpClient = new TouchPortalAPI.Client();
@@ -35,17 +37,13 @@ let actionRouter: ActionRouter;
 let killEvent: KillEvent;
 let killEventView: KillEventView;
 
-const killHistory = new KillHistory(tpClient);
+let killHistory: KillHistory;
 
 const pluginSettings: Record<string, any> = {};
 
-tpClient.logIt('DEBUG', `icu=${process.versions.icu}`);
-tpClient.logIt('DEBUG', `NODE_ICU_DATA=${process.env.NODE_ICU_DATA}`);
-tpClient.logIt('DEBUG', `supported=${Intl.DateTimeFormat.supportedLocalesOf(['de-DE','en-US']).join(',')}`);
-tpClient.logIt('DEBUG', `probe=${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}`);
-
 const initPlugin = () => {
-    killEventView = new KillEventView(tpClient, killHistory, pluginSettings[SC_LOCALE]);
+    killHistory = new KillHistory(tpClient, pluginSettings[SC_LANGUAGE] as Languages);
+    killEventView = new KillEventView(tpClient, killHistory, pluginSettings[SC_DATE_LOCALE], pluginSettings[SC_TIMEZONE]);
     killEvent = new KillEvent(tpClient, killHistory, killEventView, new Blacklist(pluginSettings[SC_BLACKLIST]));
 
     eventRouter = new EventRouter();
