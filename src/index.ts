@@ -97,16 +97,16 @@ tpClient.on('Update', (curVersion: string, remoteVersion: string) => {
     tpClient.logIt('DEBUG', 'Update: there is an update curVersion:', curVersion, 'remoteVersion:', remoteVersion);
     let optionsArray = [
         {
-            "id":`${PLUGIN_ID}Update`,
-            "title":"Take Me to Download"
+            'id': `${PLUGIN_ID}Update`,
+            'title': 'Take Me to Download',
         },
         {
-            "id":`${PLUGIN_ID}Ignore`,
-            "title":"Ignore Update"
-        }
+            'id': `${PLUGIN_ID}Ignore`,
+            'title': 'Ignore Update',
+        },
     ];
 
-    tpClient.sendNotification(`${PLUGIN_ID}UpdateNotification`,"My Plugin has been updated", `A new version of my plugin ${remoteVersion} is available to download`, optionsArray);
+    tpClient.sendNotification(`${PLUGIN_ID}UpdateNotification`, 'My Plugin has been updated', `A new version of my plugin ${remoteVersion} is available to download`, optionsArray);
 });
 
 tpClient.on('NotificationClicked', (data) => {
@@ -120,4 +120,4 @@ tpClient.on('Action', (actionData) => {
     actionRouter.route(actionData.actionId);
 });
 
-tpClient.connect({pluginId: PLUGIN_ID, "updateUrl": UPDATE_URL});
+tpClient.connect({pluginId: PLUGIN_ID, 'updateUrl': UPDATE_URL});

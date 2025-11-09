@@ -15,7 +15,12 @@ export class KillEvent extends BaseEventHandler {
     private readonly _killDataRegex = /^<(?<timestamp>\d+-\d+-\d+T\d+:\d+:\d+\.\d+Z)>.+in zone '(?<zone>[\w_-]+)'.+?with damage type '(?<dmgType>\w+)'.+$/;
     private readonly _actorFilter: IActorFilter[] = [];
 
-    constructor(tpClient: Client, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView, blacklist: Blacklist) {
+    constructor(
+        tpClient: Client,
+        private readonly _killHistory: KillHistory,
+        private readonly _killEventView: KillEventView,
+        private readonly _blacklist: Blacklist
+    ) {
         super(tpClient, 'CActor::Kill');
 
         this._actorFilter.push(new NpcHumanoidFilter(tpClient));
@@ -54,7 +59,7 @@ export class KillEvent extends BaseEventHandler {
             time: new Date(killDataMatch.groups.timestamp).toLocaleString(),
             cause: killDataMatch.groups.dmgType,
             zone: killDataMatch.groups.zone,
-            murdererOnBlacklist: false,
+            murdererOnBlacklist: this._blacklist.isBlacklisted(murderer),
         });
 
         this._killEventView.update();

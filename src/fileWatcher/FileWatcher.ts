@@ -91,6 +91,7 @@ export class FileWatcher extends EventEmitter {
                 }
 
                 this._lastSize = stat.size;
+                this.emit('readEnd');
                 resolve();
             });
         });
