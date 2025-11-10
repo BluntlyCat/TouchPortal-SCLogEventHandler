@@ -1,10 +1,11 @@
 import { KillHistory } from '../events/kill/KillHistory';
 import { BaseAction } from './BaseAction';
 import { KillEventView } from '../events/kill/KillEventView';
+import { Client } from 'touchportal-api';
 
 export class PrevKillMessage extends BaseAction {
-    public constructor(key: string, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView) {
-        super(key)
+    public constructor(tpClient: Client, key: string, private readonly _killHistory: KillHistory, private readonly _killEventView: KillEventView) {
+        super(tpClient, key)
     }
 
     exec() {

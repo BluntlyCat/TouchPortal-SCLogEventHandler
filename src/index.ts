@@ -26,6 +26,10 @@ import { KillHistory } from './events/kill/KillHistory';
 import { KillEventView } from './events/kill/KillEventView';
 import { Blacklist } from './events/kill/Blacklist';
 import { Languages } from './translations';
+import { DeleteInput } from './actions/DeleteInput';
+import { AddInput } from './actions/AddInput';
+import { SetTargetWallet } from './actions/SetTargetWallet';
+import { TransferMoney } from './actions/TransferMoney';
 
 // Create an instance of the Touch Portal Client
 const tpClient = new TouchPortalAPI.Client();
@@ -51,8 +55,12 @@ const initPlugin = () => {
     eventRouter.register(new HelmetEvent(tpClient));
 
     actionRouter = new ActionRouter();
-    actionRouter.register(new PrevKillMessage('sc_prev_kill_msg', killHistory, killEventView));
-    actionRouter.register(new NextKillMessage('sc_next_kill_msg', killHistory, killEventView));
+    actionRouter.register(new PrevKillMessage(tpClient, 'sc_prev_kill_msg', killHistory, killEventView));
+    actionRouter.register(new NextKillMessage(tpClient, 'sc_next_kill_msg', killHistory, killEventView));
+    actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input'));
+    actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input'));
+    actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
+    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money'));
 
     if (fileWatcher) {
         fileWatcher.stop();
@@ -121,7 +129,7 @@ tpClient.on('NotificationClicked', (data) => {
 
 tpClient.on('Action', (actionData) => {
     tpClient.logIt('DEBUG', 'Action Received', actionData);
-    actionRouter.route(actionData.actionId);
+    actionRouter.route(actionData);
 });
 
 tpClient.connect({pluginId: PLUGIN_ID, 'updateUrl': UPDATE_URL});

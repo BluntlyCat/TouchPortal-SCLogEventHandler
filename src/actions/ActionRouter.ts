@@ -7,10 +7,10 @@ export class ActionRouter {
         this._actions.push(action);
     }
 
-    public route(key: string) {
+    public route(actionData: any) {
         for (const a of this._actions) {
-            if (a.key === key) {
-                a.exec();
+            if (a.key === actionData.actionId) {
+                a.exec(actionData);
             }
         }
     }
