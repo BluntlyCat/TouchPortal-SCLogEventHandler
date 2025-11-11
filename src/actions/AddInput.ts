@@ -19,7 +19,7 @@ export class AddInput extends BaseAction {
                 value = sc_wallet_add_value.value;
             }
             this._tpClient.stateUpdate('sc_add_input_value', value);
-            this._tpClient.stateUpdate('sc_add_input_value_formatted', this._fmt.format(value));
+            this._tpClient.stateUpdate('sc_add_input_value_formatted', `${this._fmt.format(value)} aUEC`);
         }
     }
 }

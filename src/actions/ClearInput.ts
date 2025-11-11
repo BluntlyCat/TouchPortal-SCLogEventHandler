@@ -8,6 +8,6 @@ export class ClearInput extends BaseAction {
 
     exec(): void {
         this._tpClient.stateUpdate('sc_add_input_value', 0);
-        this._tpClient.stateUpdate('sc_add_input_value_formatted', 0);
+        this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
     }
 }

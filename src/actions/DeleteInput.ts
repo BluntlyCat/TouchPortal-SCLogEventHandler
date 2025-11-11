@@ -2,8 +2,11 @@ import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
 
 export class DeleteInput extends BaseAction {
-    public constructor(tpClient: Client, key: string) {
+    private readonly _fmt: Intl.NumberFormat;
+
+    public constructor(tpClient: Client, key: string, locale: string) {
         super(tpClient, key);
+        this._fmt = new Intl.NumberFormat(locale);
     }
 
     exec(actionData: any): void {
@@ -13,7 +16,8 @@ export class DeleteInput extends BaseAction {
             if (sc_wallet_current_value.value.length > 1) {
                 value = sc_wallet_current_value.value.substring(0, sc_wallet_current_value.value.length - 1);
             }
-            this._tpClient.stateUpdate('sc_wallet_transfer', value);
+            this._tpClient.stateUpdate('sc_add_input_value', value);
+            this._tpClient.stateUpdate('sc_add_input_value_formatted', `${this._fmt.format(+value)} aUEC`);
         }
     }
 }

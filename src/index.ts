@@ -59,7 +59,7 @@ const initPlugin = () => {
     actionRouter = new ActionRouter();
     actionRouter.register(new PrevKillMessage(tpClient, 'sc_prev_kill_msg', killHistory, killEventView));
     actionRouter.register(new NextKillMessage(tpClient, 'sc_next_kill_msg', killHistory, killEventView));
-    actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input'));
+    actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
     actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE]));

@@ -14,8 +14,8 @@ export class ClearWallet extends BaseAction {
         this._tpClient.stateUpdate('sc_wallet_total', 0);
         this._tpClient.stateUpdate('sc_wallet_squad', 0);
         this._tpClient.stateUpdate('sc_add_input_value', 0);
-        this._tpClient.stateUpdate('sc_add_input_value_formatted', 0);
+        this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
         this._tpClient.stateUpdate('sc_wallet_target', Wallets.total);
-        this._tpClient.stateUpdate('sc_wallet_text', `Total: 0 aUEC\nSquad: 0 aUEC\nPersonal: 0 aUEC`);
+        this._tpClient.stateUpdate('sc_wallet_text', `Total: 0 aUEC\nSquad: 0 aUEC\nOwn: 0 aUEC`);
     }
 }
