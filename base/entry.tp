@@ -100,7 +100,7 @@
           "prefix": "SC Tools:",
           "tryInline": true,
           "hasHoldFunctionality": false,
-          "format": "Total value {$sc_wallet_total_value$}, Squad value {$sc_wallet_squad_value$}, Target wallet {$sc_target_wallet$}, Value {$sc_wallet_add_value$}",
+          "format": "Total value {$sc_wallet_total_value$}, Squad value {$sc_wallet_squad_value$}, Target wallet {$sc_target_wallet$}, Action {$sc_wallet_action_type$}, Value {$sc_wallet_add_value$}",
           "data": [
             {
               "type": "text",
@@ -125,6 +125,12 @@
               "label": "value",
               "default": "0",
               "id": "sc_wallet_add_value"
+            },
+            {
+              "type": "text",
+              "label": "value",
+              "default": "deposit",
+              "id": "sc_wallet_action_type"
             }
           ]
         },

@@ -8,3 +8,8 @@ export enum Wallets {
     total = 'total',
     squad = 'squad',
 }
+
+export enum ActionTypes {
+    deposit = 'deposit',
+    withdraw = 'withdraw',
+}

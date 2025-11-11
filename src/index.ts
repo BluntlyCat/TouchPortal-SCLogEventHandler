@@ -14,7 +14,8 @@ import {
     SC_ROOT_PATH,
     UPDATE_URL,
     SC_DATE_LOCALE,
-    SC_TIMEZONE, SC_LANGUAGE,
+    SC_TIMEZONE,
+    SC_LANGUAGE,
 } from './constants';
 import { KillEvent } from './events/kill/KillEvent';
 import { EventRouter } from './events/EventRouter';
@@ -62,7 +63,7 @@ const initPlugin = () => {
     actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
-    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE]));
+    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE], 'utf8'));
     actionRouter.register(new ClearWallet(tpClient, 'sc_wallet_clear_all'));
     actionRouter.register(new ClearInput(tpClient, 'sc_wallet_clear_input'));
 
