@@ -1,27 +1,20 @@
 import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
 import { ActionTypes, Wallets } from './types';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import os from 'node:os';
+import { JsonWallet } from './JsonWallet';
+
 
 export class TransferMoney extends BaseAction {
     private readonly _fmt: Intl.NumberFormat;
-    private readonly _moneyJson: string;
+    private readonly _jsonWallet: JsonWallet;
 
-    public constructor(tpClient: Client, key: string, locale: string, private readonly _encoding: BufferEncoding) {
+    public constructor(tpClient: Client, key: string, locale: string, encoding: BufferEncoding) {
         super(tpClient, key);
+        this._jsonWallet = new JsonWallet(encoding);
         this._fmt = new Intl.NumberFormat(locale);
-        this._moneyJson = path.join(os.homedir(), '.touch_portal_star_citizen_tools_wallet.json');
 
-        if (!existsSync(this._moneyJson)) {
-            this.writeJson({
-                total: 0,
-                squad: 0,
-            });
-        }
-
-        this.readJson();
+        const {total, squad} = this._jsonWallet.walletData;
+        this.updateValues(total, squad, false);
     }
 
     exec(actionData: any): void {
@@ -44,13 +37,41 @@ export class TransferMoney extends BaseAction {
         let total_value = +actionData.data.find((d) => d.id === 'sc_wallet_total_value')?.value;
         let squad_value = +actionData.data.find((d) => d.id === 'sc_wallet_squad_value')?.value;
 
+        if (actionType === ActionTypes.set) {
+            ({
+                total_value,
+                squad_value,
+            } = this.setValue(wallet, total_value, squad_value, add_value));
+        } else {
+            ({
+                total_value,
+                squad_value,
+            } = this.transferValue(actionData, wallet, actionType, total_value, squad_value, add_value));
+        }
+
+        this.updateValues(total_value, squad_value);
+    }
+
+    private setValue(wallet: Wallets, total_value: number, squad_value: number, add_value: number) {
+        if (wallet === Wallets.total) {
+            return {
+                total_value: add_value,
+                squad_value,
+            };
+        } else {
+            return {
+                total_value,
+                squad_value: add_value,
+            };
+        }
+    }
+
+    private transferValue(actionData: any, wallet: Wallets, actionType: ActionTypes, total_value: number, squad_value: number, add_value: number) {
         if (actionType === ActionTypes.deposit) {
             total_value += add_value;
         } else {
             total_value -= add_value;
         }
-
-        this._tpClient.stateUpdate('sc_wallet_total', total_value);
 
         if (wallet === Wallets.squad) {
             squad_value = +actionData.data.find((d) => d.id === 'sc_wallet_squad_value')?.value;
@@ -60,9 +81,14 @@ export class TransferMoney extends BaseAction {
             } else {
                 squad_value -= add_value;
             }
-
-            this._tpClient.stateUpdate('sc_wallet_squad', squad_value);
         }
+
+        return {total_value, squad_value};
+    }
+
+    private updateValues(total_value: number, squad_value: number, writeJson = true) {
+        this._tpClient.stateUpdate('sc_wallet_total', total_value);
+        this._tpClient.stateUpdate('sc_wallet_squad', squad_value);
 
         const formattedTotal = this._fmt.format(total_value);
         const formattedSquad = this._fmt.format(squad_value);
@@ -71,34 +97,8 @@ export class TransferMoney extends BaseAction {
         this._tpClient.stateUpdate('sc_add_input_value', 0);
         this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
 
-        this.writeJson({
-            total: total_value,
-            squad: squad_value,
-        });
-    }
-
-    private writeJson(json: object): void {
-        writeFileSync(this._moneyJson, JSON.stringify(json), { encoding: this._encoding });
-    }
-
-    private readJson(): void {
-        if(!existsSync(this._moneyJson)) {
-            return;
+        if (writeJson) {
+            this._jsonWallet.writeJson({total: total_value, squad: squad_value});
         }
-
-        const json = JSON.parse(readFileSync(this._moneyJson, { encoding: this._encoding }));
-
-        const total = +json.total;
-        const squad = +json.squad;
-
-        const formattedTotal = this._fmt.format(total);
-        const formattedSquad = this._fmt.format(squad);
-        const formattedPersonal = this._fmt.format(total - squad);
-
-        this._tpClient.stateUpdate('sc_wallet_total', total);
-        this._tpClient.stateUpdate('sc_wallet_squad', squad);
-        this._tpClient.stateUpdate('sc_wallet_text', `Total: ${formattedTotal} aUEC\nSquad: ${formattedSquad} aUEC\nOwn: ${formattedPersonal} aUEC`);
-        this._tpClient.stateUpdate('sc_add_input_value', 0);
-        this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
     }
 }

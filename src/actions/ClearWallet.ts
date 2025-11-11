@@ -1,10 +1,14 @@
 import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
 import { Wallets } from './types';
+import { JsonWallet } from './JsonWallet';
 
 export class ClearWallet extends BaseAction {
-    public constructor(tpClient: Client, key: string) {
+    private readonly _jsonWallet: JsonWallet;
+
+    public constructor(tpClient: Client, key: string, encoding: BufferEncoding) {
         super(tpClient, key);
+        this._jsonWallet = new JsonWallet(encoding);
     }
 
     exec(): void {
@@ -17,5 +21,10 @@ export class ClearWallet extends BaseAction {
         this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
         this._tpClient.stateUpdate('sc_wallet_target', Wallets.total);
         this._tpClient.stateUpdate('sc_wallet_text', `Total: 0 aUEC\nSquad: 0 aUEC\nOwn: 0 aUEC`);
+
+        this._jsonWallet.writeJson({
+            total: 0,
+            squad: 0,
+        })
     }
 }

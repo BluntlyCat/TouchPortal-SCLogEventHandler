@@ -64,7 +64,7 @@ const initPlugin = () => {
     actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
     actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE], 'utf8'));
-    actionRouter.register(new ClearWallet(tpClient, 'sc_wallet_clear_all'));
+    actionRouter.register(new ClearWallet(tpClient, 'sc_wallet_clear_all', 'utf8'));
     actionRouter.register(new ClearInput(tpClient, 'sc_wallet_clear_input'));
 
     if (fileWatcher) {

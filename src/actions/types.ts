@@ -12,4 +12,10 @@ export enum Wallets {
 export enum ActionTypes {
     deposit = 'deposit',
     withdraw = 'withdraw',
+    set = 'set'
+}
+
+export interface JsonWalletData {
+    total: number;
+    squad: number;
 }
