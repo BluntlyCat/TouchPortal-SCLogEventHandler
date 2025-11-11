@@ -3,8 +3,10 @@ import { Client } from 'touchportal-api';
 import { Wallets } from './types';
 
 export class TransferMoney extends BaseAction {
-    public constructor(tpClient: Client, key: string) {
+    private readonly _fmt: Intl.NumberFormat;
+    public constructor(tpClient: Client, key: string, locale: string) {
         super(tpClient, key);
+        this._fmt = new Intl.NumberFormat(locale);
     }
 
     exec(actionData: any): void {
@@ -27,7 +29,11 @@ export class TransferMoney extends BaseAction {
             this._tpClient.stateUpdate('sc_wallet_squad', squad_value);
         }
 
-        this._tpClient.stateUpdate('sc_wallet_text', `Total: ${total_value}\nSquad: ${squad_value}\nPersonal: ${total_value - squad_value}`);
+        const formattedTotal = this._fmt.format(total_value);
+        const formattedSquad = this._fmt.format(squad_value);
+        const formattedPersonal = this._fmt.format(total_value - squad_value);
+        this._tpClient.stateUpdate('sc_wallet_text', `Total: ${formattedTotal} aUEC\nSquad: ${formattedSquad} aUEC\nPersonal: ${formattedPersonal} aUEC`);
         this._tpClient.stateUpdate('sc_add_input_value', 0);
+        this._tpClient.stateUpdate('sc_add_input_value_formatted', 0);
     }
 }

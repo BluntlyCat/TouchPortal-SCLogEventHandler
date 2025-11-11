@@ -2,8 +2,11 @@ import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
 
 export class AddInput extends BaseAction {
-    public constructor(tpClient: Client, key: string) {
+    private readonly _fmt: Intl.NumberFormat;
+
+    public constructor(tpClient: Client, key: string, locale: string) {
         super(tpClient, key);
+        this._fmt = new Intl.NumberFormat(locale);
     }
 
     exec(actionData: any): void {
@@ -16,6 +19,7 @@ export class AddInput extends BaseAction {
                 value = sc_wallet_add_value.value;
             }
             this._tpClient.stateUpdate('sc_add_input_value', value);
+            this._tpClient.stateUpdate('sc_add_input_value_formatted', this._fmt.format(value));
         }
     }
 }

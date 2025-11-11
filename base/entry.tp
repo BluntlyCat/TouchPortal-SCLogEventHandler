@@ -184,6 +184,20 @@
               "id": "sc_target_wallet"
             }
           ]
+        },
+        {
+          "id": "sc_wallet_clear_all",
+          "name": "Reset wallet",
+          "type": "communicate",
+          "prefix": "SC Tools:",
+          "format": "Clears all wallet values"
+        },
+        {
+          "id": "sc_wallet_clear_input",
+          "name": "Clear input",
+          "type": "communicate",
+          "prefix": "SC Tools:",
+          "format": "Clear the input value"
         }
       ],
       "states": [
@@ -234,6 +248,11 @@
         },
         {
           "id": "sc_add_input_value",
+          "type": "text",
+          "default": "0"
+        },
+        {
+          "id": "sc_add_input_value_formatted",
           "type": "text",
           "default": "0"
         },

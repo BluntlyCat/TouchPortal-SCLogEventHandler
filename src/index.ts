@@ -30,6 +30,8 @@ import { DeleteInput } from './actions/DeleteInput';
 import { AddInput } from './actions/AddInput';
 import { SetTargetWallet } from './actions/SetTargetWallet';
 import { TransferMoney } from './actions/TransferMoney';
+import { ClearWallet } from './actions/ClearWallet';
+import { ClearInput } from './actions/ClearInput';
 
 // Create an instance of the Touch Portal Client
 const tpClient = new TouchPortalAPI.Client();
@@ -58,9 +60,11 @@ const initPlugin = () => {
     actionRouter.register(new PrevKillMessage(tpClient, 'sc_prev_kill_msg', killHistory, killEventView));
     actionRouter.register(new NextKillMessage(tpClient, 'sc_next_kill_msg', killHistory, killEventView));
     actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input'));
-    actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input'));
+    actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
-    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money'));
+    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE]));
+    actionRouter.register(new ClearWallet(tpClient, 'sc_wallet_clear_all'));
+    actionRouter.register(new ClearInput(tpClient, 'sc_wallet_clear_input'));
 
     if (fileWatcher) {
         fileWatcher.stop();
