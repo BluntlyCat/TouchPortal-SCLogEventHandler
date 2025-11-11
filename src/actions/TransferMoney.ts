@@ -12,7 +12,7 @@ export class TransferMoney extends BaseAction {
     public constructor(tpClient: Client, key: string, locale: string, private readonly _encoding: BufferEncoding) {
         super(tpClient, key);
         this._fmt = new Intl.NumberFormat(locale);
-        this._moneyJson = path.join(os.homedir(), '.money.json');
+        this._moneyJson = path.join(os.homedir(), '.touch_portal_star_citizen_tools_wallet.json');
 
         if (!existsSync(this._moneyJson)) {
             this.writeJson({
