@@ -1,6 +1,6 @@
 import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
-import { ActionTypes, Wallets } from './types';
+import { ActionTypes, JsonWalletData, Wallets } from './types';
 import { JsonWallet } from './JsonWallet';
 
 
@@ -13,8 +13,32 @@ export class TransferMoney extends BaseAction {
         this._jsonWallet = new JsonWallet(encoding);
         this._fmt = new Intl.NumberFormat(locale);
 
-        const {total, squad} = this._jsonWallet.walletData;
-        this.updateValues(total, squad, false);
+        const walletData = this._jsonWallet.walletData;
+        this.updateValues(walletData, false);
+        let walletKeyIndex = 0;
+        const walletKeys = Object.keys(Wallets);
+        setInterval(() => {
+            const wallet = walletKeys[walletKeyIndex] as Wallets;
+            walletKeyIndex = (walletKeyIndex + 1) % walletKeys.length;
+
+            if (wallet === Wallets.total) {
+                return;
+            }
+
+            const walletData = this._jsonWallet.readJson();
+            const formattedTotal = this._fmt.format(walletData.total);
+            const formattedSquad = this._fmt.format(walletData[wallet]);
+            const squadTotal = Object.entries(walletData).reduce((p, [ key, value ]) => {
+                if (key === Wallets.total) {
+                    return p;
+                }
+
+                return p + value;
+            }, 0);
+            const formattedPersonal = this._fmt.format(walletData.total - squadTotal);
+            const squadAcronym = wallet.substring(0, 2).toUpperCase();
+            this._tpClient.stateUpdate('sc_wallet_text', `T:\t${formattedTotal} aUEC\n${squadAcronym}:\t${formattedSquad} aUEC\nO:\t${formattedPersonal} aUEC`);
+        }, 5000);
     }
 
     exec(actionData: any): void {
@@ -33,72 +57,51 @@ export class TransferMoney extends BaseAction {
         const actionType = sc_wallet_action_type as ActionTypes;
 
         const add_value = +actionData.data.find((d) => d.id === 'sc_wallet_add_value')?.value;
-
-        let total_value = +actionData.data.find((d) => d.id === 'sc_wallet_total_value')?.value;
-        let squad_value = +actionData.data.find((d) => d.id === 'sc_wallet_squad_value')?.value;
-
+        let walletData = this._jsonWallet.readJson();
         if (actionType === ActionTypes.set) {
-            ({
-                total_value,
-                squad_value,
-            } = this.setValue(wallet, total_value, squad_value, add_value));
+            walletData = this.setValue(wallet, walletData, add_value);
         } else {
-            ({
-                total_value,
-                squad_value,
-            } = this.transferValue(actionData, wallet, actionType, total_value, squad_value, add_value));
+            walletData = this.transferValue(wallet, actionType, walletData, add_value);
         }
 
-        this.updateValues(total_value, squad_value);
+        this.updateValues(walletData);
     }
 
-    private setValue(wallet: Wallets, total_value: number, squad_value: number, add_value: number) {
-        if (wallet === Wallets.total) {
-            return {
-                total_value: add_value,
-                squad_value,
-            };
-        } else {
-            return {
-                total_value,
-                squad_value: add_value,
-            };
-        }
+    private setValue(wallet: Wallets, walletData: JsonWalletData, add_value: number) {
+        return {
+            ...walletData,
+            [wallet]: add_value,
+        } as JsonWalletData;
     }
 
-    private transferValue(actionData: any, wallet: Wallets, actionType: ActionTypes, total_value: number, squad_value: number, add_value: number) {
+    private transferValue(wallet: Wallets, actionType: ActionTypes, walletData: JsonWalletData, add_value: number) {
         if (actionType === ActionTypes.deposit) {
-            total_value += add_value;
+            walletData.total += add_value;
         } else {
-            total_value -= add_value;
+            walletData.total -= add_value;
         }
 
-        if (wallet === Wallets.squad) {
-            squad_value = +actionData.data.find((d) => d.id === 'sc_wallet_squad_value')?.value;
-
+        if (wallet !== Wallets.total) {
             if (actionType === ActionTypes.deposit) {
-                squad_value += add_value;
+                walletData[wallet] += add_value;
             } else {
-                squad_value -= add_value;
+                walletData[wallet] -= add_value;
             }
         }
 
-        return {total_value, squad_value};
+        return walletData;
     }
 
-    private updateValues(total_value: number, squad_value: number, writeJson = true) {
-        this._tpClient.stateUpdate('sc_wallet_total', total_value);
-        this._tpClient.stateUpdate('sc_wallet_squad', squad_value);
+    private updateValues(walletData: JsonWalletData, writeJson = true) {
+        Object.entries(walletData).forEach(([ key, value ]) => {
+            this._tpClient.stateUpdate(`sc_wallet_${key}`, value);
+        });
 
-        const formattedTotal = this._fmt.format(total_value);
-        const formattedSquad = this._fmt.format(squad_value);
-        const formattedPersonal = this._fmt.format(total_value - squad_value);
-        this._tpClient.stateUpdate('sc_wallet_text', `T:\t${formattedTotal} aUEC\nS:\t${formattedSquad} aUEC\nO:\t${formattedPersonal} aUEC`);
         this._tpClient.stateUpdate('sc_add_input_value', 0);
         this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
 
         if (writeJson) {
-            this._jsonWallet.writeJson({total: total_value, squad: squad_value});
+            this._jsonWallet.writeJson(walletData);
         }
     }
 }

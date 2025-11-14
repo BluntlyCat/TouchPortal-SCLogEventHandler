@@ -1,7 +1,7 @@
 import path from 'node:path';
 import os from 'node:os';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { JsonWalletData } from './types';
+import { JsonWalletData, Wallets } from './types';
 
 export class JsonWallet {
     private readonly _moneyJson: string;
@@ -10,6 +10,10 @@ export class JsonWallet {
     public constructor(private readonly _encoding: BufferEncoding) {
         this._moneyJson = path.join(os.homedir(), '.touch_portal_star_citizen_tools_wallet.json');
         this._walletData = this.readJson();
+    }
+
+    public static emptyWallet(): JsonWalletData {
+        return Object.fromEntries(Object.values(Wallets).map(key => [ key, 0 ])) as JsonWalletData
     }
 
     public get walletData(): JsonWalletData {
@@ -22,17 +26,9 @@ export class JsonWallet {
 
     public readJson(): JsonWalletData {
         if (!existsSync(this._moneyJson)) {
-            this.writeJson({
-                total: 0,
-                squad: 0,
-            });
+            this.writeJson(JsonWallet.emptyWallet());
         }
 
-        const json = JSON.parse(readFileSync(this._moneyJson, {encoding: this._encoding}));
-
-        const total = +json.total;
-        const squad = +json.squad;
-
-        return { total, squad };
+        return JSON.parse(readFileSync(this._moneyJson, {encoding: this._encoding})) as JsonWalletData;
     }
 }

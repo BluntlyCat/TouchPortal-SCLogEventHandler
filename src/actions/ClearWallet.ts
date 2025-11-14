@@ -22,9 +22,6 @@ export class ClearWallet extends BaseAction {
         this._tpClient.stateUpdate('sc_wallet_target', Wallets.total);
         this._tpClient.stateUpdate('sc_wallet_text', `Total: 0 aUEC\nSquad: 0 aUEC\nOwn: 0 aUEC`);
 
-        this._jsonWallet.writeJson({
-            total: 0,
-            squad: 0,
-        })
+        this._jsonWallet.writeJson(JsonWallet.emptyWallet());
     }
 }

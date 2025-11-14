@@ -6,7 +6,8 @@ export interface Action {
 
 export enum Wallets {
     total = 'total',
-    squad = 'squad',
+    exploration = 'exploration',
+    trading = 'trading',
 }
 
 export enum ActionTypes {
@@ -15,7 +16,4 @@ export enum ActionTypes {
     set = 'set'
 }
 
-export interface JsonWalletData {
-    total: number;
-    squad: number;
-}
+export type JsonWalletData = {[k in Wallets]: number};
