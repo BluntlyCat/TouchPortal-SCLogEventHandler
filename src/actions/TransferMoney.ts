@@ -93,7 +93,7 @@ export class TransferMoney extends BaseAction {
         const formattedTotal = this._fmt.format(total_value);
         const formattedSquad = this._fmt.format(squad_value);
         const formattedPersonal = this._fmt.format(total_value - squad_value);
-        this._tpClient.stateUpdate('sc_wallet_text', `Total: ${formattedTotal} aUEC\nSquad: ${formattedSquad} aUEC\nOwn: ${formattedPersonal} aUEC`);
+        this._tpClient.stateUpdate('sc_wallet_text', `T:\t${formattedTotal} aUEC\nS:\t${formattedSquad} aUEC\nO:\t${formattedPersonal} aUEC`);
         this._tpClient.stateUpdate('sc_add_input_value', 0);
         this._tpClient.stateUpdate('sc_add_input_value_formatted', '0 aUEC');
 

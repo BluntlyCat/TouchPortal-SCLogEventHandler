@@ -270,7 +270,7 @@
         {
           "id": "sc_wallet_text",
           "type": "text",
-          "default": "Total: 0 aUEC\nSquad: 0 aUEC\nOwn: 0 aUEC"
+          "default": "T: 0 aUEC\nS:\t0\taUEC\nO:\t0 aUEC"
         }
       ],
       "events": []
