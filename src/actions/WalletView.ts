@@ -42,7 +42,9 @@ export class WalletView {
             return p + value;
         }, 0);
         const formattedPersonal = this._fmt.format(walletData.total - squadTotal);
+
         if (!!wallet) {
+            wallet = wallet === this._jsonWallet.totalWallet && this._jsonWallet.wallets.length > 1 ? this._jsonWallet.wallets[1] : wallet;
             const formattedSquad = this._fmt.format(walletData[wallet]);
             const ucWallet = wallet.substring(0, 1).toUpperCase() + wallet.substring(1, wallet.length);
             this._tpClient.stateUpdate('sc_wallet_formatted_text', `Total:\t${formattedTotal} aUEC\n${ucWallet}:\t${formattedSquad} aUEC\nOwn:\t${formattedPersonal} aUEC`);

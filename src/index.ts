@@ -78,7 +78,7 @@ const initPlugin = () => {
     actionRouter.register(new ReceiveDigit(tpClient, 'sc_wallet_digit', pluginSettings[SC_DATE_LOCALE]));
     actionRouter.register(new SetTargetWallet(tpClient, jsonWallet.wallets, 'sc_set_target_wallet'));
     actionRouter.register(new Submit(tpClient, 'sc_wallet_submit', jsonWallet, walletView));
-    actionRouter.register(new ClearWallet(tpClient, jsonWallet, 'sc_wallet_clear_wallet'));
+    actionRouter.register(new ClearWallet(tpClient, jsonWallet, walletView, 'sc_wallet_clear_wallet'));
     actionRouter.register(new ResetInput(tpClient, 'sc_wallet_reset_input'));
 
     if (fileWatcher) {

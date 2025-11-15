@@ -10,12 +10,12 @@ export class Submit extends BaseAction {
         super(tpClient, key);
 
         const walletData = this._jsonWallet.readJson();
-        _walletView.updateView(walletData, '');
+        _walletView.updateView(walletData, _jsonWallet.wallets.length > 1 ? _jsonWallet.wallets[1] : '');
     }
 
     exec(actionData: any): void {
-        const sc_target_wallet = actionData.data.find((d) => d.id === 'sc_target_wallet')?.value;
-        if (!this._jsonWallet.wallets.includes(sc_target_wallet)) {
+        const targetWallet = actionData.data.find((d) => d.id === 'sc_target_wallet')?.value;
+        if (!this._jsonWallet.wallets.includes(targetWallet)) {
             return;
         }
 
@@ -31,13 +31,13 @@ export class Submit extends BaseAction {
 
         let walletData = this._jsonWallet.readJson();
         if (actionType === ActionTypes.set) {
-            walletData = this.setValue(sc_target_wallet, walletData, add_value);
+            walletData = this.setValue(targetWallet, walletData, add_value);
         } else {
-            walletData = this.transferValue(sc_target_wallet, actionType, walletData, add_value, proportion);
+            walletData = this.transferValue(targetWallet, actionType, walletData, add_value, proportion);
         }
 
         this._jsonWallet.writeJson(walletData);
-        this._walletView.updateView(walletData, sc_target_wallet);
+        this._walletView.updateView(walletData, targetWallet);
         this.resetValues();
     }
 
