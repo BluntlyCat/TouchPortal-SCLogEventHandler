@@ -16,6 +16,8 @@ import {
     SC_DATE_LOCALE,
     SC_TIMEZONE,
     SC_LANGUAGE,
+    SC_WALLETS,
+    SC_WALLET_UPDATE_INTERVAL,
 } from './constants';
 import { KillEvent } from './events/kill/KillEvent';
 import { EventRouter } from './events/EventRouter';
@@ -27,12 +29,15 @@ import { KillHistory } from './events/kill/KillHistory';
 import { KillEventView } from './events/kill/KillEventView';
 import { Blacklist } from './events/kill/Blacklist';
 import { Languages } from './translations';
-import { DeleteInput } from './actions/DeleteInput';
-import { AddInput } from './actions/AddInput';
+import { Backspace } from './actions/Backspace';
+import { ReceiveDigit } from './actions/ReceiveDigit';
 import { SetTargetWallet } from './actions/SetTargetWallet';
-import { TransferMoney } from './actions/TransferMoney';
+import { Submit } from './actions/Submit';
 import { ClearWallet } from './actions/ClearWallet';
-import { ClearInput } from './actions/ClearInput';
+import { ResetInput } from './actions/ResetInput';
+import { JsonWallet } from './actions/JsonWallet';
+import { json } from 'node:stream/consumers';
+import { WalletView } from './actions/WalletView';
 
 // Create an instance of the Touch Portal Client
 const tpClient = new TouchPortalAPI.Client();
@@ -43,6 +48,7 @@ let eventRouter: EventRouter;
 let actionRouter: ActionRouter;
 let killEvent: KillEvent;
 let killEventView: KillEventView;
+let walletView: WalletView;
 
 let killHistory: KillHistory;
 
@@ -57,15 +63,23 @@ const initPlugin = () => {
     eventRouter.register(killEvent);
     eventRouter.register(new HelmetEvent(tpClient));
 
+    const jsonWallet = new JsonWallet(pluginSettings[SC_WALLETS], 'utf8');
+    if (!!walletView) {
+        walletView.stopUpdate();
+    }
+
+    walletView = new WalletView(jsonWallet, pluginSettings[SC_DATE_LOCALE], pluginSettings[SC_WALLET_UPDATE_INTERVAL], tpClient);
+    walletView.startUpdate();
+
     actionRouter = new ActionRouter();
     actionRouter.register(new PrevKillMessage(tpClient, 'sc_prev_kill_msg', killHistory, killEventView));
     actionRouter.register(new NextKillMessage(tpClient, 'sc_next_kill_msg', killHistory, killEventView));
-    actionRouter.register(new DeleteInput(tpClient, 'sc_wallet_delete_input', pluginSettings[SC_DATE_LOCALE]));
-    actionRouter.register(new AddInput(tpClient, 'sc_wallet_add_input', pluginSettings[SC_DATE_LOCALE]));
-    actionRouter.register(new SetTargetWallet(tpClient, 'sc_set_target_wallet'));
-    actionRouter.register(new TransferMoney(tpClient, 'sc_wallet_transfer_money', pluginSettings[SC_DATE_LOCALE], 'utf8'));
-    actionRouter.register(new ClearWallet(tpClient, 'sc_wallet_clear_all', 'utf8'));
-    actionRouter.register(new ClearInput(tpClient, 'sc_wallet_clear_input'));
+    actionRouter.register(new Backspace(tpClient, 'sc_wallet_backspace', pluginSettings[SC_DATE_LOCALE]));
+    actionRouter.register(new ReceiveDigit(tpClient, 'sc_wallet_digit', pluginSettings[SC_DATE_LOCALE]));
+    actionRouter.register(new SetTargetWallet(tpClient, jsonWallet.wallets, 'sc_set_target_wallet'));
+    actionRouter.register(new Submit(tpClient, 'sc_wallet_submit', jsonWallet, walletView));
+    actionRouter.register(new ClearWallet(tpClient, jsonWallet, 'sc_wallet_clear_wallet'));
+    actionRouter.register(new ResetInput(tpClient, 'sc_wallet_reset_input'));
 
     if (fileWatcher) {
         fileWatcher.stop();

@@ -1,7 +1,7 @@
 import { BaseAction } from './BaseAction';
 import { Client } from 'touchportal-api';
 
-export class AddInput extends BaseAction {
+export class ReceiveDigit extends BaseAction {
     private readonly _fmt: Intl.NumberFormat;
 
     public constructor(tpClient: Client, key: string, locale: string) {

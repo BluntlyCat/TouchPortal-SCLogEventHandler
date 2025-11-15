@@ -64,6 +64,24 @@
       "parentGroup": "Language"
     },
     {
+      "name": "Wallets",
+      "default": "",
+      "type": "text",
+      "tooltip": {
+        "title": "Wallets",
+        "body": "A comma separated list of custom wallets. E.g. trading,exploration,..."
+      }
+    },
+    {
+      "name": "Wallet Update Interval",
+      "default": "5000",
+      "type": "text",
+      "tooltip": {
+        "title": "Wallet Update Interval",
+        "body": "How often the formatted wallet text gets updated"
+      }
+    },
+    {
       "name": "Player Blacklist",
       "default": "",
       "type": "multiline",
@@ -94,13 +112,13 @@
           "format": "Iterate through kill messages"
         },
         {
-          "id": "sc_wallet_transfer_money",
-          "name": "Transfer Money",
+          "id": "sc_wallet_submit",
+          "name": "Submit Input",
           "type": "communicate",
           "prefix": "SC Tools:",
           "tryInline": true,
           "hasHoldFunctionality": false,
-          "format": "Target wallet {$sc_target_wallet$}, Action {$sc_wallet_action_type$}, Value {$sc_wallet_add_value$}",
+          "format": "Target wallet {$sc_target_wallet$}, Action {$sc_wallet_action_type$}, Value {$sc_wallet_add_value$}, Proportion {$sc_wallet_add_proportion$}",
           "data": [
             {
               "type": "text",
@@ -119,46 +137,52 @@
               "label": "value",
               "default": "0",
               "id": "sc_wallet_add_value"
+            },
+            {
+              "type": "text",
+              "label": "proportion",
+              "default": "1",
+              "id": "sc_wallet_add_proportion"
             }
           ]
         },
         {
-          "id": "sc_wallet_add_input",
-          "name": "Add input",
+          "id": "sc_wallet_digit",
+          "name": "Send digit",
           "type": "communicate",
           "prefix": "SC Tools:",
           "tryInline": true,
           "hasHoldFunctionality": false,
-          "format": "Current value {$sc_wallet_current_value$}, add value {$sc_wallet_add_value$}",
+          "format": "Current value {$current_value$}, add value {$digit$}",
           "data": [
             {
               "type": "text",
               "label": "value",
               "default": "0",
-              "id": "sc_wallet_current_value"
+              "id": "current_value"
             },
             {
               "type": "text",
               "label": "value",
               "default": "0",
-              "id": "sc_wallet_add_value"
+              "id": "digit"
             }
           ]
         },
         {
-          "id": "sc_wallet_delete_input",
-          "name": "Delete input",
+          "id": "sc_wallet_backspace",
+          "name": "Backspace",
           "type": "communicate",
           "prefix": "SC Tools:",
           "tryInline": true,
           "hasHoldFunctionality": false,
-          "format": "Current value {$sc_wallet_current_value$}",
+          "format": "Current value {$current_value$}",
           "data": [
             {
               "type": "text",
               "label": "value",
               "default": "0",
-              "id": "sc_wallet_current_value"
+              "id": "current_value"
             }
           ]
         },
@@ -180,18 +204,18 @@
           ]
         },
         {
-          "id": "sc_wallet_clear_all",
+          "id": "sc_wallet_clear_wallet",
           "name": "Reset wallet",
           "type": "communicate",
           "prefix": "SC Tools:",
           "format": "Clears all wallet values"
         },
         {
-          "id": "sc_wallet_clear_input",
-          "name": "Clear input",
+          "id": "sc_wallet_reset_input",
+          "name": "Reset input",
           "type": "communicate",
           "prefix": "SC Tools:",
-          "format": "Clear the input value"
+          "format": "Reset the input value"
         }
       ],
       "states": [
@@ -231,32 +255,22 @@
           "default": ""
         },
         {
-          "id": "sc_wallet_total",
+          "id": "sc_wallet_digits",
           "type": "text",
           "default": "0"
         },
         {
-          "id": "sc_wallet_squad",
-          "type": "text",
-          "default": "0"
-        },
-        {
-          "id": "sc_add_input_value",
-          "type": "text",
-          "default": "0"
-        },
-        {
-          "id": "sc_add_input_value_formatted",
+          "id": "sc_wallet_digits_formatted",
           "type": "text",
           "default": "0 aUEC"
         },
         {
-          "id": "sc_wallet_target",
+          "id": "sc_wallet_target_wallet",
           "type": "text",
           "default": "total"
         },
         {
-          "id": "sc_wallet_text",
+          "id": "sc_wallet_formatted_text",
           "type": "text",
           "default": "T: 0 aUEC\nS:\t0\taUEC\nO:\t0 aUEC"
         }
